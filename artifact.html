@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Naiya Dhruv — Story</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Outfit:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b0c10;
+      --surface: #0f1117;
+      --text: #e8e6e3;
+      --text-dim: #8a8895;
+      --accent-cool: #4fc1e9;
+      --accent-warm: #e6a855;
+      --font-display: 'Instrument Serif', Georgia, serif;
+      --font-body: 'Outfit', system-ui, sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      line-height: 1.55;
+      overflow-x: hidden;
+    }
+
+    /* Progress */
+    .progress {
+      position: fixed; top: 1.5rem; right: 1.5rem; z-index: 100;
+      font-family: var(--font-body); font-size: 0.7rem; letter-spacing: 0.12em;
+      color: var(--text-dim); pointer-events: none; opacity: 0; transition: opacity 0.6s ease;
+    }
+    .progress.is-visible { opacity: 1; }
+
+    /* Sections (chapters) */
+    .chapter {
+      min-height: 100vh; display: flex; flex-direction: column; justify-content: center;
+      padding: 10vh 8vw; position: relative; overflow: hidden;
+    }
+    .chapter:nth-child(odd) { background: linear-gradient(180deg, var(--bg) 0%, #0f0f14 50%, var(--bg) 100%); }
+    .chapter:nth-child(even) { background: linear-gradient(180deg, #0c0d14 0%, #0b0c10 50%, #0c0d14 100%); }
+
+    .chapter-num {
+      position: absolute; top: 2rem; left: 8vw;
+      font-family: var(--font-display); font-size: clamp(8rem, 18vw, 16rem);
+      color: rgba(255,255,255,0.02); line-height: 1; pointer-events: none; user-select: none;
+    }
+
+    .chapter-label {
+      font-family: var(--font-body); font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--accent-cool); margin-bottom: 1.25rem; opacity: 0.9;
+    }
+
+    .chapter h2 {
+      font-family: var(--font-display); font-size: clamp(3rem, 8vw, 7rem); line-height: 1.05;
+      max-width: 14ch; letter-spacing: -0.03em; color: var(--text);
+    }
+    .chapter h2 em {
+      font-style: italic; color: var(--accent-warm);
+      text-shadow: 0 0 40px rgba(230,168,85,0.25);
+    }
+
+    .chapter p.lead {
+      max-width: 52ch; margin-top: 2rem; color: var(--text-dim); font-size: 1.05rem;
+    }
+
+    /* Entry gate */
+    .gate {
+      height: 100vh; display: flex; align-items: center; justify-content: center;
+      flex-direction: column; gap: 2rem; position: relative;
+    }
+    .gate h1 {
+      font-family: var(--font-display); font-size: clamp(4rem, 10vw, 10rem); letter-spacing: -0.05em; line-height: 0.9;
+      color: var(--text); text-align: center;
+    }
+    .gate h1 span { display: block; opacity: 0.85; }
+    .gate .subtitle {
+      font-family: var(--font-body); font-size: 0.95rem; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--text-dim); text-align: center;
+    }
+    .gate a.enter {
+      margin-top: 3rem; display: inline-block; padding: 1.1rem 2.8rem;
+      border: 1px solid rgba(255,255,255,0.15); border-radius: 100px;
+      color: var(--text); text-decoration: none; letter-spacing: 0.15em; font-size: 0.75rem; text-transform: uppercase;
+      transition: background 0.3s ease, border-color 0.3s ease;
+    }
+    .gate a.enter:hover { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.35); }
+
+    /* Audio / timer hint */
+    .audio-hint {
+      position: fixed; bottom: 2rem; left: 8vw; z-index: 90;
+      font-size: 0.7rem; letter-spacing: 0.15em; color: var(--text-dim); pointer-events: none;
+    }
+
+    /* Cards grid (work) */
+    .cards {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(22ch, 1fr)); gap: 1.25rem; margin-top: 3rem;
+      max-width: 110ch;
+    }
+    .card {
+      border: 1px solid rgba(255,255,255,0.08); border-radius: 1rem; padding: 1.75rem;
+      background: rgba(255,255,255,0.015); transition: border-color 0.3s ease, transform 0.3s ease;
+    }
+    .card:hover { border-color: rgba(255,255,255,0.2); transform: translateY(-4px); }
+    .card h3 { font-family: var(--font-display); font-size: 1.25rem; color: var(--text); margin-bottom: 0.5rem; }
+    .card p { color: var(--text-dim); font-size: 0.9rem; line-height: 1.5; }
+
+    /* Footer / end */
+    .end {
+      min-height: 60vh; display: flex; flex-direction: column; justify-content: center; align-items: center;
+      text-align: center; padding: 10vh 8vw;
+    }
+    .end h2 { font-family: var(--font-display); font-size: clamp(2.5rem, 6vw, 5rem); }
+    .end .logo { margin-top: 3rem; width: 48px; height: 48px; border: 1px solid rgba(255,255,255,0.15); border-radius: 50%; display: grid; place-items: center; font-family: var(--font-display); font-size: 1.25rem; color: var(--accent-cool); }
+
+    /* Small utilities */
+    .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border-width: 0; }
+  </style>
+</head>
+<body>
+
+  <div class="progress" id="progress" aria-live="polite">00 / 06</div>
+  <div class="audio-hint" aria-hidden="true">00:00</div>
+
+  <main>
+    <!-- Gate -->
+    <section class="gate" id="gate" aria-label="Entry">
+      <h1><span>Naiya</span> <span>Dhruv</span></h1>
+      <p class="subtitle">Graphic Designer &amp; AI-Fluent Maker</p>
+      <a href="#chapter-1" class="enter">Enter Site</a>
+    </section>
+
+    <!-- Chapter 1 -->
+    <section class="chapter" id="chapter-1" aria-label="Chapter 1">
+      <span class="chapter-num" aria-hidden="true">01</span>
+      <p class="chapter-label">Chapter 01 / Intent</p>
+      <h2>You can’t create <em>sustainably</em> without rest.</h2>
+      <p class="lead">Brand systems, editorial direction, atmospheric digital experiences. This portfolio is a journal — each case is a chapter, each chapter is a breath.</p>
+    </section>
+
+    <!-- Chapter 2 -->
+    <section class="chapter" id="chapter-2" aria-label="Chapter 2">
+      <span class="chapter-num" aria-hidden="true">02</span>
+      <p class="chapter-label">Chapter 02 / Work</p>
+      <h2>Open a <em>case.</em></h2>
+      <div class="cards" aria-label="Selected work">
+        <article class="card">
+          <h3>Brand System</h3>
+          <p>A modular identity framework with color rhythm and typographic scale for digital-first touchpoints.</p>
+        </article>
+        <article class="card">
+          <h3>Editorial Direction</h3>
+          <p>Story-driven layout systems that adapt from long-form essays to rapid social sequences.</p>
+        </article>
+        <article class="card">
+          <h3>Atmospheric Web</h3>
+          <p>Immersive scroll experiences that hold attention through texture, motion, and quiet.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- Chapter 3 -->
+    <section class="chapter" id="chapter-3" aria-label="Chapter 3">
+      <span class="chapter-num" aria-hidden="true">03</span>
+      <p class="chapter-label">Chapter 03 / Method</p>
+      <h2>Under the same <em>sky.</em></h2>
+      <p class="lead">Every project starts with a constraint, not a feature list. The system grows from the problem, not the other way around.</p>
+    </section>
+
+    <!-- Chapter 4 -->
+    <section class="chapter" id="chapter-4" aria-label="Chapter 4">
+      <span class="chapter-num" aria-hidden="true">04</span>
+      <p class="chapter-label">Chapter 04 / About</p>
+      <h2>Rest is <em>maintenance.</em></h2>
+      <p class="lead">Not a luxury. A calibration knob. This work is built on the belief that atmosphere carries message better than noise.</p>
+    </section>
+
+    <!-- Chapter 5 -->
+    <section class="chapter" id="chapter-5" aria-label="Chapter 5">
+      <span class="chapter-num" aria-hidden="true">05</span>
+      <p class="chapter-label">Chapter 05 / Toolkit</p>
+      <h2>Hire the <em>system.</em></h2>
+      <p class="lead">Not just a designer — an engineering partner who understands motion, code, and how stories live in browsers.</p>
+    </section>
+
+    <!-- Chapter 6 -->
+    <section class="chapter" id="chapter-6" aria-label="Chapter 6">
+      <span class="chapter-num" aria-hidden="true">06</span>
+      <p class="chapter-label">Chapter 06 / Studio</p>
+      <h2>Sleep isn’t rest. <em>It’s maintenance.</em></h2>
+      <p class="lead">The best work is calm work. Every case here was made with intention, atmosphere, and the space to think.</p>
+    </section>
+
+    <!-- End -->
+    <section class="end" id="end" aria-label="End">
+      <h2>Continue.</h2>
+      <a href="#gate" class="enter">Back to top</a>
+      <div class="logo" aria-hidden="true">N</div>
+    </section>
+  </main>
+
+  <script>
+    // Lazy progress tracking
+    const chapters = document.querySelectorAll('.chapter, .end');
+    const progress = document.getElementById('progress');
+    const total = chapters.length + 1; // + gate
+    const updateProgress = () => {
+      let visible = 0;
+      chapters.forEach(ch => {
+        const rect = ch.getBoundingClientRect();
+        if (rect.top < window.innerHeight * 0.6) visible++;
+      });
+      progress.textContent = String(visible).padStart(2, '0') + ' / ' + String(total).padStart(2, '0');
+    };
+    window.addEventListener('scroll', () => {
+      progress.classList.add('is-visible');
+      updateProgress();
+    }, { passive: true });
+    updateProgress();
+  </script>
+</body>
+</html>

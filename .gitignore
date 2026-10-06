@@ -1,0 +1,59 @@
+# Logs & Temp
+logs
+*.log
+*.exe
+scripts/*.exe
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+.tmp
+.tmp*
+.tmp-emil-skills/
+
+# Dependencies & Build Output
+node_modules/
+dist/
+dist-ssr/
+build/
+
+# Secrets & Environment variables (CRITICAL)
+.env
+.env.*
+*.env
+*.local
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Editor & IDE files
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Platform & Agent metadata / local caches
+.vercel
+.agents/
+.gemini/
+.cursor/
+.claude/
+.impeccable/
+.img2threejs/
+graphify-out/
+10k-websites-skill/
+portfolio_pdf/
+assets/
+scratch/
+Lib/
+docs/
+
+# Large unused media frame dumps
+public/frames/

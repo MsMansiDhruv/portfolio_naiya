@@ -1,0 +1,191 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@theme {
+  --font-sans: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-serif: 'Playfair Display', 'Cormorant Garamond', Georgia, serif;
+  --font-handwriting: 'Caveat', cursive, sans-serif;
+}
+
+.font-handwriting {
+  font-family: 'Caveat', cursive, sans-serif;
+}
+
+.font-serif {
+  font-family: var(--font-serif);
+  letter-spacing: 0.01em;
+}
+
+@layer base {
+  :root {
+    --bg-ivory: #f7f4ee;
+    --bg-ivory-soft: #f0ebd9;
+    --ink-black: #0a0a0a;
+    --ink-subtle: #4a4a4a;
+    --ink-muted: #737373;
+    --line-black: rgba(10, 10, 10, 0.15);
+    --line-strong: rgba(10, 10, 10, 0.85);
+    --cobalt: #0038ff;
+    --cobalt-soft: rgba(0, 56, 255, 0.12);
+    
+    --font-display: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif;
+    --font-sans: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif;
+    --font-serif: 'Playfair Display', 'Cormorant Garamond', Georgia, serif;
+    --font-mono: 'Space Mono', 'JetBrains Mono', monospace;
+
+    --background: #f7f4ee;
+    --foreground: #0a0a0a;
+  }
+
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html, body, #root {
+    width: 100%;
+    min-height: 100%;
+    background-color: var(--bg-ivory);
+    color: var(--ink-black);
+    font-family: var(--font-sans);
+    letter-spacing: 0.012em;
+    overflow-x: hidden;
+    max-width: 100vw;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  p, span, a, button, input, textarea, li {
+    letter-spacing: 0.012em;
+  }
+
+  .font-sans {
+    font-family: var(--font-sans);
+    letter-spacing: 0.015em;
+  }
+
+  .font-display {
+    font-family: var(--font-display);
+    letter-spacing: 0.012em;
+  }
+
+  /* Custom Selection */
+  ::selection {
+    background-color: var(--cobalt);
+    color: #ffffff;
+  }
+}
+
+/* Structural Layout & Editorial Grid Elements */
+.editorial-grid-overlay {
+  background-image: 
+    linear-gradient(to right, rgba(10, 10, 10, 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(10, 10, 10, 0.06) 1px, transparent 1px);
+  background-size: 4rem 4rem;
+}
+
+.editorial-fine-line {
+  height: 1px;
+  background-color: var(--line-black);
+}
+
+.editorial-line-v {
+  width: 1px;
+  background-color: var(--line-black);
+}
+
+/* Crop Mark (+) Helpers */
+.crop-mark {
+  position: relative;
+  width: 16px;
+  height: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.crop-mark::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 1px;
+  background-color: currentColor;
+}
+
+.crop-mark::after {
+  content: '';
+  position: absolute;
+  height: 100%;
+  width: 1px;
+  background-color: currentColor;
+}
+
+/* Acetate Sheet Styling */
+.acetate-panel {
+  background: rgba(247, 244, 238, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(10, 10, 10, 0.15);
+  box-shadow: 0 10px 30px rgba(10, 10, 10, 0.04);
+}
+
+.acetate-panel-dark {
+  background: rgba(10, 10, 10, 0.92);
+  color: #f7f4ee;
+  border: 1px solid rgba(247, 244, 238, 0.2);
+}
+
+/* Scrollbar styling — dark theme */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: #0a0a0a;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(212, 175, 55, 0.25);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(212, 175, 55, 0.6);
+}
+
+/* GPU-accelerated transitions for targeted animated elements */
+.fade-up-text,
+.contact-reveal,
+.contact-card {
+  will-change: transform, opacity;
+}
+
+/* Modal Open: Strictly ONE scrollbar, background completely locked, sticky note hidden */
+html.modal-open,
+body.modal-open {
+  overflow: hidden !important;
+  touch-action: none;
+}
+
+body.modal-open #witty-sticky-note,
+body.modal-open .witty-sticky-note-container,
+body.modal-open [data-no-pen] {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+/* Lenis Motion Kinetic Text & Card Inertia */
+.section-glide-text {
+  will-change: transform, opacity, filter;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .testimonial-card {
+    will-change: transform;
+    transform: perspective(900px) rotateX(calc(var(--scroll-velocity, 0) * 0.08deg));
+    transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+}
+
+

@@ -1,0 +1,255 @@
+/* —— GSAP Curve Mode & Morphing SVG Footer Stylesheet —— */
+.curve-footer-wrapper {
+  position: relative;
+  width: 100%;
+  background: #08080a;
+  color: #f7f4ef;
+  overflow: visible;
+  z-index: 30;
+}
+
+/* SVG Curve Transition Header — Positioned Above Black Layer */
+.curve-svg-container {
+  position: absolute;
+  top: -138px;
+  left: 0;
+  width: 100%;
+  height: 140px;
+  pointer-events: auto;
+  z-index: 50;
+  overflow: visible;
+}
+
+.curve-svg-path {
+  fill: #08080a;
+  will-change: d;
+}
+
+.curve-stroke-line {
+  fill: none;
+  stroke: url(#goldCurveGlow);
+  stroke-width: 2.5;
+  filter: drop-shadow(0 0 16px rgba(212, 180, 138, 1));
+  will-change: d;
+}
+
+/* Morphing Icon Container */
+.morph-icon-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: rgba(212, 180, 138, 0.08);
+  border: 1px solid rgba(212, 180, 138, 0.3);
+  margin-bottom: 1.25rem;
+  box-shadow: 0 0 24px rgba(212, 180, 138, 0.25);
+}
+
+/* Main Footer Body */
+.curve-footer-body {
+  position: relative;
+  z-index: 15;
+  padding: 4rem max(2rem, 6vw) 3rem;
+  max-width: 1300px;
+  margin: 0 auto;
+}
+
+.curve-footer-head {
+  margin-bottom: 4rem;
+}
+
+.curve-footer-kicker {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold, #d4b48a);
+  margin-bottom: 0.75rem;
+  display: block;
+}
+
+.curve-footer-title {
+  font-family: var(--font-display, sans-serif);
+  font-size: clamp(2.5rem, 5.5vw, 4.8rem);
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+  color: #ffffff;
+  margin: 0 0 1rem;
+}
+
+.curve-footer-title em {
+  font-family: var(--font-serif, serif);
+  font-style: italic;
+  color: var(--gold, #d4b48a);
+}
+
+.curve-footer-sub {
+  font-size: 1.15rem;
+  color: rgba(255, 255, 255, 0.65);
+  max-width: 48ch;
+  line-height: 1.6;
+}
+
+/* Brief Form Area */
+.curve-footer-brief-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 4rem;
+  padding-bottom: 4rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  margin-bottom: 3rem;
+}
+
+.curve-brief-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+.curve-brief-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.curve-brief-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.curve-brief-input,
+.curve-brief-textarea {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  padding: 1rem 1.25rem;
+  color: #ffffff;
+  font-size: 1rem;
+  font-family: inherit;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.curve-brief-input:focus,
+.curve-brief-textarea:focus {
+  border-color: var(--gold, #d4b48a);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 20px rgba(212, 180, 138, 0.2);
+}
+
+.curve-brief-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.curve-brief-submit {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.95rem 2rem;
+  border-radius: 999px;
+  background: var(--gold, #d4b48a);
+  color: #08080a;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border: 0;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 20px rgba(212, 180, 138, 0.3);
+}
+
+.curve-brief-submit:hover {
+  background: #ffffff;
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 28px rgba(255, 255, 255, 0.4);
+}
+
+/* Designer Meta Sidebar */
+.curve-meta-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.curve-meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.curve-meta-term {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold, #d4b48a);
+}
+
+.curve-meta-desc {
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.85);
+  margin: 0;
+}
+
+.curve-social-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.curve-social-link {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  transition: color 0.25s ease;
+}
+
+.curve-social-link:hover {
+  color: var(--gold, #d4b48a);
+}
+
+/* Footer Bottom Bar */
+.curve-footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.curve-footer-copy {
+  margin: 0;
+}
+
+.curve-footer-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.curve-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 10px #22c55e;
+}
+
+@media (max-width: 850px) {
+  .curve-footer-brief-grid {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+}

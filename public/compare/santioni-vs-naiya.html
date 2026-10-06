@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Santioni vs Naiya — Design Critique</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #0a0a0a;
+      --muted: rgba(10, 10, 10, 0.58);
+      --faint: rgba(10, 10, 10, 0.38);
+      --line: rgba(10, 10, 10, 0.1);
+      --bg: #f7f4ef;
+      --paper: #ffffff;
+      --gold: #b8925e;
+      --santioni: #1d1d1d;
+      --red: #c62828;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Outfit, system-ui, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(1200px 600px at 10% -10%, rgba(212, 180, 138, 0.18), transparent 60%),
+        var(--bg);
+      line-height: 1.45;
+      font-size: 15px;
+    }
+    .wrap { max-width: 980px; margin: 0 auto; padding: 3rem 1.25rem 5rem; }
+    .eyebrow {
+      font-size: 0.72rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--gold);
+      font-weight: 500;
+    }
+    h1 {
+      font-family: "Instrument Serif", Georgia, serif;
+      font-weight: 400;
+      font-size: clamp(2.4rem, 5vw, 3.6rem);
+      line-height: 1.05;
+      margin: 0.35rem 0 0.75rem;
+      letter-spacing: -0.02em;
+    }
+    h1 em { font-style: italic; color: var(--gold); }
+    .lede { max-width: 38rem; color: var(--muted); margin: 0 0 2rem; }
+    .verdict {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 1rem;
+      margin: 1.5rem 0 2.5rem;
+    }
+    @media (max-width: 720px) { .verdict { grid-template-columns: 1fr; } }
+    .card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 1rem;
+      padding: 1.15rem 1.25rem;
+    }
+    .card strong { display: block; font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--faint); margin-bottom: 0.45rem; }
+    .score {
+      font-family: "Instrument Serif", Georgia, serif;
+      font-size: 2.4rem;
+      line-height: 1;
+      margin: 0.2rem 0 0.4rem;
+    }
+    .score span { color: var(--gold); }
+    .pair {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin: 1.25rem 0 2rem;
+    }
+    @media (max-width: 720px) { .pair { grid-template-columns: 1fr; } }
+    figure {
+      margin: 0;
+      background: #111;
+      border-radius: 0.9rem;
+      overflow: hidden;
+      border: 1px solid var(--line);
+    }
+    figure img { display: block; width: 100%; height: 220px; object-fit: cover; object-position: center; }
+    figcaption {
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.72);
+      padding: 0.55rem 0.75rem 0.7rem;
+      background: #111;
+    }
+    h2 {
+      font-family: "Instrument Serif", Georgia, serif;
+      font-weight: 400;
+      font-size: 1.85rem;
+      margin: 2.5rem 0 0.75rem;
+      letter-spacing: -0.01em;
+    }
+    h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin: 0 0 0.35rem;
+    }
+    .gap {
+      display: grid;
+      gap: 0.65rem;
+      margin: 1rem 0 1.5rem;
+    }
+    .row {
+      display: grid;
+      grid-template-columns: 7.5rem 1fr;
+      gap: 0.75rem;
+      align-items: start;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 0.75rem;
+      padding: 0.85rem 1rem;
+    }
+    @media (max-width: 560px) { .row { grid-template-columns: 1fr; } }
+    .tag {
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold);
+      font-weight: 600;
+      padding-top: 0.15rem;
+    }
+    .row p { margin: 0; color: var(--muted); }
+    .row p b { color: var(--ink); font-weight: 600; }
+    .steal {
+      list-style: none;
+      padding: 0;
+      margin: 0.75rem 0 0;
+      display: grid;
+      gap: 0.55rem;
+    }
+    .steal li {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 0.75rem;
+      padding: 0.85rem 1rem;
+      display: grid;
+      grid-template-columns: 1.6rem 1fr;
+      gap: 0.65rem;
+      align-items: start;
+    }
+    .steal i {
+      font-style: normal;
+      font-family: "Instrument Serif", Georgia, serif;
+      color: var(--gold);
+      font-size: 1.15rem;
+      line-height: 1.2;
+    }
+    .steal b { display: block; margin-bottom: 0.15rem; }
+    .steal span { color: var(--muted); }
+    .dont {
+      margin-top: 1.5rem;
+      padding: 1rem 1.15rem;
+      border-radius: 0.85rem;
+      border: 1px dashed rgba(184, 146, 94, 0.55);
+      background: rgba(212, 180, 138, 0.1);
+    }
+    .dont p { margin: 0.35rem 0 0; color: var(--muted); }
+    footer {
+      margin-top: 3rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--line);
+      color: var(--faint);
+      font-size: 0.8rem;
+    }
+    a { color: var(--ink); }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <p class="eyebrow">Design critique · Cloud Studio × Notturno</p>
+    <h1>What Santioni has that <em>you don’t</em> — yet</h1>
+    <p class="lede">
+      Ruthless read: Santioni is a single obsessive world. Your site is a beautiful studio
+      with too many announcers. Steal their <b>discipline</b>, not their dark luxury skin.
+    </p>
+
+    <section class="verdict">
+      <div class="card">
+        <strong>Verdict</strong>
+        <p class="score">They win on <span>commitment</span></p>
+        <p style="margin:0;color:var(--muted)">
+          One story. Giant type. Object over UI. Almost no chrome.
+          You win on hire-me clarity + living sky — lose on silence, scale, and restraint.
+        </p>
+      </div>
+      <div class="card">
+        <strong>Systems (live)</strong>
+        <p style="margin:0 0 0.5rem"><b>Santioni</b> — Charles Rosie · PP Nikkei Maru · GT Era · #1d1d1d · full-bleed red product fields · WebGL comic</p>
+        <p style="margin:0"><b>Naiya</b> — Outfit · Instrument Serif · gold #d4b48a · high-key sky · glass chrome · bento proof</p>
+      </div>
+    </section>
+
+    <section class="pair">
+      <figure>
+        <img src="santioni-hero.png" alt="Santioni Notturno experience hero" />
+        <figcaption>Santioni · type owns the night</figcaption>
+      </figure>
+      <figure>
+        <img src="naiya-hero.png" alt="Naiya Cloud Studio hero" />
+        <figcaption>Naiya · avatar owns the sky — UI competes</figcaption>
+      </figure>
+      <figure>
+        <img src="santioni-product.png" alt="Santioni product over giant type" />
+        <figcaption>Santioni · bottle cuts through letters</figcaption>
+      </figure>
+      <figure>
+        <img src="naiya-work.png" alt="Naiya work bento section" />
+        <figcaption>Naiya · work still reads as cards</figcaption>
+      </figure>
+    </section>
+
+    <h2>The gaps</h2>
+    <div class="gap">
+      <div class="row">
+        <div class="tag">Thesis</div>
+        <div>
+          <h3>They obsess. You narrate.</h3>
+          <p><b>Santioni:</b> one night, one line, one comic. <b>You:</b> chapter labels + StoryGuide + bridges + kickers explain the film while the film is playing. Explanation kills wonder.</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="tag">Type</div>
+        <div>
+          <h3>Their letters are the product. Yours are polite.</h3>
+          <p>Display type at viewport scale with custom locks (interlocked O’s). Your Outfit/serif pairing is clean — but never <em>dangerous</em>. One word per chapter should feel carved, not set.</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="tag">Chrome</div>
+        <div>
+          <h3>They have 3 UI things. You have a cockpit.</h3>
+          <p>Logo + 2-tab pill + audio. You stack side nav + StoryGuide + chapter bridge + meta lines (“Chapter · Proof”, “Selected work”, “Interactive bento…”). Triple labeling = portfolio dashboard.</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="tag">Object</div>
+        <div>
+          <h3>Thing over interface</h3>
+          <p>Bottle / figure sits <b>on top of type</b>, full-bleed, tilted, unavoidable. Your work lives in rounded cards with padding — albums, not objects. Pins are smart; the frame is still “UI card.”</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="tag">Color</div>
+        <div>
+          <h3>Courage vs. climate control</h3>
+          <p>They punch one saturated field (red) and let it own a whole view. You stay soft white/gold everywhere — cohesive, safe, forgettable mid-scroll. Cloud Studio can stay high-key and still earn <b>one</b> hard color beat.</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="tag">Ritual</div>
+        <div>
+          <h3>Entrance as brand theater</h3>
+          <p>Age gate is a type composition, not a checkbox. Your loader is closer to a spinner with a logo. Ritual should feel like opening the studio door — silence, seal, then sky.</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="tag">Sense</div>
+        <div>
+          <h3>Sound is atmosphere</h3>
+          <p>They score the scroll. You’re silent. Even a whisper of wind/room tone would make Cloud Studio feel inhabited — optional toggle, not auto-blast.</p>
+        </div>
+      </div>
+    </div>
+
+    <h2>Steal this (keep Cloud Studio)</h2>
+    <ol class="steal">
+      <li>
+        <i>01</i>
+        <div>
+          <b>One label per chapter</b>
+          <span>Kill bridge + kicker + StoryGuide saying the same beat. Pick one companion chrome — not both side nav and StoryGuide fighting.</span>
+        </div>
+      </li>
+      <li>
+        <i>02</i>
+        <div>
+          <b>Featured case = object through type</b>
+          <span>Before the bento: one full-bleed cover with the title under/through the image (Santioni product pattern), then the grid. Cards second, spectacle first.</span>
+        </div>
+      </li>
+      <li>
+        <i>03</i>
+        <div>
+          <b>Make one word per section huge</b>
+          <span>Instrument Serif italic already exists — scale it until it feels reckless. Secondary copy gets quieter, not louder.</span>
+        </div>
+      </li>
+      <li>
+        <i>04</i>
+        <div>
+          <b>One color punch</b>
+          <span>Keep sky high-key. Add a single decisive field (ink dusk, deep indigo wash, or a craft board that floods) so mid-scroll isn’t climate-controlled beige forever.</span>
+        </div>
+      </li>
+      <li>
+        <i>05</i>
+        <div>
+          <b>Entrance as seal</b>
+          <span>Longer quiet logo hold. No busy progress theater. Gate the avatar reveal like they gate the night.</span>
+        </div>
+      </li>
+      <li>
+        <i>06</i>
+        <div>
+          <b>Fewer glass rectangles</b>
+          <span>Media planes edge-to-edge. Glass only for chrome that must float. If a border can die, kill it.</span>
+        </div>
+      </li>
+    </ol>
+
+    <div class="dont">
+      <p class="eyebrow">Do not copy</p>
+      <p>
+        Dark mode by default · WebGL comic budget · liquor brand swagger · red-everywhere.
+        Your world is <b>Cloud Studio</b>. Steal ruthlessness of focus — stay luminous.
+      </p>
+    </div>
+
+    <footer>
+      Sources: <a href="https://santionispirits.com/" target="_blank" rel="noreferrer">santionispirits.com</a>
+      (Active Theory · Plan8) · local Cloud Studio · DESIGN.md tokens.
+      Screenshots captured Sep 2026.
+    </footer>
+  </main>
+</body>
+</html>

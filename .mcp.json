@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "zerodb-memory": {
+      "type": "http",
+      "url": "https://api.ainative.studio/v1/mcp/zerodb-memory-mcp/messages",
+      "headers": {
+        "x-api-key": "tmp_w_LcGxcJ5QTZyKO5UY8regp-vNyoYZx3Wzb_2FooOL0"
+      }
+    }
+  }
+}
