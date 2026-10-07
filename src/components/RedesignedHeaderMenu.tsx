@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { VolumeX, Sparkles, ArrowUpRight, Menu, X } from 'lucide-react'
-import { NaiyaDhruvLogo } from './NaiyaDhruvLogo'
 
 interface RedesignedHeaderMenuProps {
   isMuted: boolean
@@ -16,6 +16,13 @@ export function RedesignedHeaderMenu({
 }: RedesignedHeaderMenuProps) {
   const [activeSection, setActiveSection] = useState<'origins' | 'works' | 'about' | 'testimonials' | 'contact'>('origins')
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false)
+  const [isDrawerRendered, setIsDrawerRendered] = useState<boolean>(false)
+  const [isDrawerActive, setIsDrawerActive] = useState<boolean>(false)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   useEffect(() => {
     const handleScroll = () => {
@@ -47,10 +54,53 @@ export function RedesignedHeaderMenu({
     }
   }, [])
 
+  const openMenu = () => {
+    setIsDrawerRendered(true)
+    setIsMobileMenuOpen(true)
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        setIsDrawerActive(true)
+      })
+    })
+  }
+
+  const closeMenu = (callback?: () => void) => {
+    setIsDrawerActive(false)
+    setIsMobileMenuOpen(false)
+    setTimeout(() => {
+      setIsDrawerRendered(false)
+      callback?.()
+    }, 280)
+  }
+
+  const toggleMenu = () => {
+    if (isMobileMenuOpen) {
+      closeMenu()
+    } else {
+      openMenu()
+    }
+  }
+
+  useEffect(() => {
+    const lenis = (window as any).__lenis
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden'
+      if (lenis) lenis.stop()
+    } else {
+      document.body.style.overflow = ''
+      if (lenis) lenis.start()
+    }
+    return () => {
+      document.body.style.overflow = ''
+      if (lenis) lenis.start()
+    }
+  }, [isMobileMenuOpen])
+
   const handleNavClick = (section: 'origins' | 'works' | 'about' | 'testimonials' | 'contact') => {
     setActiveSection(section)
-    setIsMobileMenuOpen(false)
-    onNavigateSection?.(section)
+    closeMenu(() => {
+      onNavigateSection?.(section)
+    })
   }
 
   return (
@@ -59,24 +109,8 @@ export function RedesignedHeaderMenu({
         data-no-pen="true" 
         className="main-header-nav fixed top-3 sm:top-5 left-0 right-0 z-50 px-2.5 sm:px-4 md:px-8 flex items-center justify-between pointer-events-none select-none w-full max-w-[100vw]"
       >
-        {/* LEFT: BRAND EMBLEM LOGO */}
-        <div
-          data-no-pen="true"
-          className="pointer-events-auto cursor-pointer flex items-center space-x-2 sm:space-x-3 px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-full bg-neutral-950/90 border border-amber-500/30 backdrop-blur-xl shadow-[0_10px_35px_rgba(0,0,0,0.8)] hover:border-amber-400 transition-all group shrink-0"
-          onClick={() => handleNavClick('origins')}
-        >
-          <div className="shrink-0">
-            <NaiyaDhruvLogo size={18} interactive={true} glow={true} />
-          </div>
-          <div>
-            <span className="text-[10px] sm:text-xs font-serif font-light text-white block leading-none group-hover:text-amber-200 transition-colors whitespace-nowrap">
-              NAIYA <span className="italic text-amber-300 font-normal">DHRUV</span>
-            </span>
-            <span className="hidden xs:block text-[6px] sm:text-[7px] font-mono tracking-widest text-neutral-400 uppercase mt-0.5 group-hover:text-amber-400/80 transition-colors whitespace-nowrap">
-              GRAPHIC DESIGNER
-            </span>
-          </div>
-        </div>
+        {/* LEFT PLACEHOLDER TO MAINTAIN BALANCED HEADER ALIGNMENT */}
+        <div className="w-10 sm:w-12 pointer-events-none" />
 
         {/* CENTER: FLOATING GLASS NAV CAPSULE (DESKTOP) */}
         <nav
@@ -101,7 +135,7 @@ export function RedesignedHeaderMenu({
               activeSection === 'works' ? 'text-amber-300 font-bold' : 'text-neutral-400 hover:text-white'
             }`}
           >
-            <span>WORKS</span>
+            <span>PROJECTS</span>
             <span className={`absolute left-0 -bottom-1 h-[1.5px] bg-amber-400 transition-all ${activeSection === 'works' ? 'w-full' : 'w-0 group-hover:w-full'}`} />
           </button>
 
@@ -173,72 +207,72 @@ export function RedesignedHeaderMenu({
 
           {/* MOBILE MENU TOGGLE (MOBILE ONLY) */}
           <button
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            type="button"
+            onClick={toggleMenu}
             className="lg:hidden p-1.5 sm:p-2 rounded-full bg-neutral-950/90 border border-amber-500/30 text-amber-400 hover:border-amber-400 transition-all backdrop-blur-xl shadow-lg cursor-pointer min-h-[34px] min-w-[34px] sm:min-h-[38px] sm:min-w-[38px] flex items-center justify-center"
             aria-label="Toggle navigation menu"
           >
             {isMobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
           </button>
         </div>
-
-        {/* EQUALIZER KEYFRAMES */}
-        <style>{`
-          @keyframes equalizer {
-            0%, 100% { height: 20%; }
-            50% { height: 100%; }
-          }
-          .animate-equalizer1 { animation: equalizer 0.8s ease-in-out infinite; }
-          .animate-equalizer2 { animation: equalizer 0.6s ease-in-out infinite 0.2s; }
-          .animate-equalizer3 { animation: equalizer 0.9s ease-in-out infinite 0.4s; }
-        `}</style>
       </header>
 
-      {/* MOBILE NAVIGATION DRAWER */}
-      {isMobileMenuOpen && (
+      {/* MOBILE NAVIGATION DRAWER (Portaled directly to document.body with Smooth Open/Close Animation) */}
+      {mounted && isDrawerRendered && createPortal(
         <div 
           data-no-pen="true"
-          style={{ touchAction: 'pan-y' }}
-          className="fixed inset-0 z-[9999] bg-black/90 backdrop-blur-2xl flex flex-col justify-center items-center p-4 select-none lg:hidden animate-fadeIn"
-          onClick={() => setIsMobileMenuOpen(false)}
+          className={`fixed inset-0 z-[100000] bg-black/85 backdrop-blur-2xl flex flex-col justify-center items-center p-4 select-none lg:hidden pointer-events-auto transition-opacity duration-300 ease-out ${
+            isDrawerActive ? 'opacity-100' : 'opacity-0'
+          }`}
+          onClick={() => closeMenu()}
         >
           <div 
-            className="w-full max-w-xs flex flex-col items-center gap-2.5 bg-neutral-950 border border-amber-500/30 p-5 rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.9)]"
+            className={`w-full max-w-xs flex flex-col items-center gap-2.5 bg-[#0e0e14] border border-amber-500/30 p-5 sm:p-6 rounded-3xl shadow-[0_25px_70px_rgba(0,0,0,0.95)] pointer-events-auto transition-all duration-300 ease-out transform ${
+              isDrawerActive ? 'scale-100 opacity-100 translate-y-0' : 'scale-95 opacity-0 translate-y-4'
+            }`}
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center space-x-2 text-[9px] font-mono tracking-widest text-amber-400 uppercase mb-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
-              <span>NAVIGATION DIRECTORY</span>
+            {/* Top Header Row with Title and Close Icon */}
+            <div className="w-full flex items-center justify-between border-b border-white/10 pb-3 mb-1">
+              <div className="flex items-center space-x-2 text-[9px] font-mono tracking-widest text-amber-400 uppercase">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+                <span>NAVIGATION DIRECTORY</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => closeMenu()}
+                className="w-7 h-7 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-neutral-400 hover:text-amber-300 flex items-center justify-center cursor-pointer transition-colors"
+                aria-label="Close directory"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
             </div>
 
             {[
               { id: 'origins', label: '01. ORIGINS (HERO)' },
-              { id: 'works', label: '02. SELECTED WORKS (3D)' },
+              { id: 'works', label: '02. PROJECTS (3D)' },
               { id: 'about', label: '03. ABOUT THE DESIGNER' },
               { id: 'testimonials', label: '04. PEER FEEDBACK' },
               { id: 'contact', label: '05. CONNECT & CONTACT' },
-            ].map((item) => (
+            ].map((item, idx) => (
               <button
                 key={item.id}
+                type="button"
                 onClick={() => handleNavClick(item.id as any)}
+                style={{ transitionDelay: `${idx * 25}ms` }}
                 className={`w-full py-2.5 px-3.5 rounded-xl text-xs font-mono tracking-wider transition-all text-left flex items-center justify-between cursor-pointer ${
                   activeSection === item.id
                     ? 'bg-amber-400 text-black font-bold shadow-[0_0_15px_rgba(245,158,11,0.4)]'
-                    : 'bg-white/5 text-neutral-300 hover:bg-white/10 hover:text-white'
+                    : 'bg-white/5 text-neutral-300 hover:bg-white/10 hover:text-white hover:border-amber-400/30'
                 }`}
               >
                 <span>{item.label}</span>
-                <ArrowUpRight className="w-3.5 h-3.5" />
+                <ArrowUpRight className="w-3.5 h-3.5 opacity-70" />
               </button>
             ))}
-
-            <button
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="mt-1 text-xs font-mono text-neutral-400 hover:text-white py-1.5"
-            >
-              [CLOSE MENU]
-            </button>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   )

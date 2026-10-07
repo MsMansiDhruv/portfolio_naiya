@@ -256,7 +256,7 @@ export function DynamicGridGallery({
       : isThreeItems
       ? "h-[540px] lg:h-[620px]"
       : isTwoItems
-      ? (hasAnyBackSrc ? "h-[560px] lg:h-[660px]" : "h-[580px] lg:h-[680px]")
+      ? (hasAnyBackSrc ? "h-[560px] lg:h-[660px]" : "h-[720px] lg:h-[820px]")
       : "h-[540px] lg:h-[640px]";
 
   return (
@@ -602,6 +602,98 @@ export function DynamicGridGallery({
             );
           })}
         </div>
+      ) : isTwoItems && !hasAnyBackSrc ? (
+        /* ── CASE 1C: 2-ITEM LOGO PRESENTATION (SQUARE SHAPE SIDE BY SIDE WITH ELEGANT GALLERY FRAMING) ── */
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 w-full max-w-5xl mx-auto py-2">
+          {displayItems.map((item, index) => {
+            const isHovered = hoveredIndex === index;
+            const cardKey = item.id || index;
+
+            return (
+              <div
+                key={cardKey}
+                onMouseEnter={() => setHoveredIndex(index)}
+                onClick={() => onItemClick?.(item, index)}
+                className={`relative aspect-square w-full overflow-hidden ${rounded} cursor-pointer select-none bg-[#09090d] group border transition-all duration-500 shadow-2xl flex items-center justify-center p-3 sm:p-5 pb-12 sm:pb-14 ${
+                  isHovered
+                    ? "border-amber-400/70 shadow-amber-500/15 shadow-2xl -translate-y-1"
+                    : "border-white/10 hover:border-white/20"
+                }`}
+              >
+                {/* Subtle Ambient Blurred Glow Backdrop */}
+                <div
+                  className="absolute inset-0 bg-cover bg-center filter blur-2xl opacity-15 scale-110 pointer-events-none"
+                  style={{ backgroundImage: `url(${item.src})` }}
+                />
+
+                {/* Inner Architectural Gallery Frame Border */}
+                <div className="absolute inset-2.5 sm:inset-3.5 rounded-xl border border-white/5 pointer-events-none group-hover:border-amber-400/20 transition-colors" />
+
+                {/* 100% Uncropped Presentation Board */}
+                <img
+                  src={item.src}
+                  alt={item.alt || item.title || ""}
+                  loading={index < 2 ? "eager" : "lazy"}
+                  className="relative z-10 max-w-full max-h-full w-auto h-auto object-contain object-center transition-transform duration-700 ease-out group-hover:scale-[1.02] filter brightness-[1.01] contrast-[1.02] drop-shadow-xl"
+                />
+
+                {/* Top Index & Category Badge */}
+                <div className="absolute top-3.5 left-3.5 right-3.5 flex items-center justify-between pointer-events-none z-20">
+                  <span className="font-mono text-[9px] sm:text-[10px] tracking-wider text-amber-400 bg-black/85 backdrop-blur-md px-2.5 py-0.5 rounded border border-amber-400/30 shadow-md">
+                    [{String(index + 1).padStart(2, "0")}]
+                  </span>
+                  {item.category && (
+                    <span className="font-mono text-[9px] sm:text-[10px] text-neutral-300 uppercase tracking-widest bg-black/75 backdrop-blur-sm px-2.5 py-0.5 rounded border border-white/10 opacity-80 group-hover:opacity-100 transition-opacity">
+                      {item.category}
+                    </span>
+                  )}
+                </div>
+
+                {/* Bottom Caption Pill with Zoom Prompt */}
+                <div
+                  className={`absolute bottom-3 left-3 right-3 flex items-center justify-between transition-all duration-300 pointer-events-none z-20 bg-black/80 backdrop-blur-md px-3 py-2 rounded-xl border border-white/10 shadow-lg ${
+                    isHovered
+                      ? "border-amber-400/40 opacity-100 translate-y-0"
+                      : "opacity-90 translate-y-0.5"
+                  }`}
+                >
+                  <div className="flex flex-col min-w-0 pr-2">
+                    {item.title && (
+                      <span className="font-sans font-medium text-xs sm:text-sm text-white drop-shadow-md truncate">
+                        {item.title}
+                      </span>
+                    )}
+                    {item.subtitle && (
+                      <span className="font-mono text-[10px] text-amber-300/80 truncate">
+                        {item.subtitle}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className={`w-6 h-6 shrink-0 rounded-full flex items-center justify-center transition-all ${
+                    isHovered
+                      ? "bg-amber-400 text-black shadow-md"
+                      : "bg-white/10 text-white/80"
+                  }`}>
+                    <svg
+                      className="w-3.5 h-3.5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
       ) : (
         /* ── CASE 2: 2-ITEM DUAL FLYERS & MULTI-ITEM GRID ── */
         <div
@@ -768,7 +860,7 @@ export function DynamicGridGallery({
                   </div>
                 ) : (
                   /* ── STANDARD STATIC IMAGE WITH VIGNETTE & CAPTION ── */
-                  <div className="relative w-full h-full overflow-hidden bg-[#0c0c10] flex items-center justify-center p-2 sm:p-4">
+                  <div className="relative w-full h-full overflow-hidden bg-[#0c0c10] flex items-center justify-center p-2 sm:p-4 pb-12 sm:pb-14">
                     {/* Blurred Ambient Glow Backdrop */}
                     <div
                       className="absolute inset-0 bg-cover bg-center filter blur-xl opacity-15 scale-110 pointer-events-none"
@@ -840,147 +932,149 @@ export function DynamicGridGallery({
         </div>
       )}
 
-      {/* Mobile: Responsive grid with interactive 3D flip support and click-to-inspect */}
-      <div className="grid md:hidden grid-cols-1 sm:grid-cols-2 gap-3 w-full">
-        {displayItems.map((item, index) => {
-          const cardKey = item.id || index;
-          const hasBackSide = Boolean(item.backSrc);
-          const isFlipped = Boolean(flippedCards[cardKey]);
+      {/* Mobile: Responsive grid with interactive 3D flip support and click-to-inspect (for 3-6 item layouts & flippable flyers) */}
+      {(!isTwoItems || hasAnyBackSrc) && (
+        <div className="grid md:hidden grid-cols-1 sm:grid-cols-2 gap-3 w-full">
+          {displayItems.map((item, index) => {
+            const cardKey = item.id || index;
+            const hasBackSide = Boolean(item.backSrc);
+            const isFlipped = Boolean(flippedCards[cardKey]);
 
-          return (
-            <div
-              key={cardKey}
-              onClick={() => onItemClick?.(item, index)}
-              style={{
-                perspective: hasBackSide ? "1200px" : undefined,
-              }}
-              className={`relative aspect-[16/10] w-full overflow-hidden ${rounded} cursor-pointer bg-[#09090d] border border-white/10 active:scale-98 transition-all shadow-md group flex items-center justify-center p-1`}
-            >
-              {hasBackSide ? (
-                <div className="relative w-full h-full">
-                  {/* Mobile Prominent Flip Button */}
-                  <div className="absolute top-2 right-2 z-30 pointer-events-auto">
-                    <button
-                      type="button"
-                      onClick={(e) => toggleCardFlip(cardKey, e)}
-                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full font-mono font-bold text-[10px] shadow-xl transition-all duration-200 cursor-pointer border ${
-                        isFlipped
-                          ? "bg-emerald-400 text-black border-emerald-300 shadow-[0_0_12px_rgba(52,211,153,0.5)]"
-                          : "bg-amber-400 text-black border-amber-300 shadow-[0_0_12px_rgba(251,191,36,0.5)]"
-                      }`}
-                    >
-                      <svg
-                        className="w-3 h-3"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
+            return (
+              <div
+                key={cardKey}
+                onClick={() => onItemClick?.(item, index)}
+                style={{
+                  perspective: hasBackSide ? "1200px" : undefined,
+                }}
+                className={`relative ${isTwoItems ? 'aspect-[16/11] min-h-[260px]' : 'aspect-[16/10]'} w-full overflow-hidden ${rounded} cursor-pointer bg-[#09090d] border border-white/10 active:scale-98 transition-all shadow-md group flex items-center justify-center p-1.5 pb-8`}
+              >
+                {hasBackSide ? (
+                  <div className="relative w-full h-full">
+                    {/* Mobile Prominent Flip Button */}
+                    <div className="absolute top-2 right-2 z-30 pointer-events-auto">
+                      <button
+                        type="button"
+                        onClick={(e) => toggleCardFlip(cardKey, e)}
+                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full font-mono font-bold text-[10px] shadow-xl transition-all duration-200 cursor-pointer border ${
+                          isFlipped
+                            ? "bg-emerald-400 text-black border-emerald-300 shadow-[0_0_12px_rgba(52,211,153,0.5)]"
+                            : "bg-amber-400 text-black border-amber-300 shadow-[0_0_12px_rgba(251,191,36,0.5)]"
+                        }`}
                       >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2.5}
-                          d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                        />
-                      </svg>
-                      <span>
-                        {item.category?.includes('Logo') || item.category?.includes('Brand')
-                          ? (isFlipped ? "CARDS ↻" : "LOGO ↻")
-                          : (isFlipped ? "FRONT ↻" : "FLIP BACK ↻")}
-                      </span>
-                    </button>
-                  </div>
-
-                  <div
-                    className="relative w-full h-full transition-transform duration-700 ease-out"
-                    style={{
-                      transformStyle: "preserve-3d",
-                      transform: isFlipped ? "rotateY(180deg)" : "rotateY(0deg)",
-                    }}
-                  >
-                    {/* Front Face */}
-                    <div
-                      className="absolute inset-0 w-full h-full overflow-hidden flex items-center justify-center bg-[#09090d] p-1.5"
-                      style={{ backfaceVisibility: "hidden" }}
-                    >
-                      <img
-                        src={item.src}
-                        alt={item.alt || item.title || ""}
-                        loading="lazy"
-                        className="relative z-10 max-w-full max-h-full w-auto h-auto object-contain object-center filter brightness-[1.03] contrast-[1.02]"
-                      />
-                      <div className="absolute bottom-2 left-2.5 right-2.5 flex items-center justify-between pointer-events-none z-20 bg-black/70 backdrop-blur-md px-2.5 py-1 rounded border border-white/10 shadow-md">
-                        <span className="font-mono text-[9px] text-amber-400 font-semibold">
+                        <svg
+                          className="w-3 h-3"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2.5}
+                            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                          />
+                        </svg>
+                        <span>
                           {item.category?.includes('Logo') || item.category?.includes('Brand')
-                            ? 'Brand Cards'
-                            : 'Page 01 · Front'}
+                            ? (isFlipped ? "CARDS ↻" : "LOGO ↻")
+                            : (isFlipped ? "FRONT ↻" : "FLIP BACK ↻")}
                         </span>
-                        {item.title && (
-                          <span className="font-sans text-[10px] text-white truncate max-w-[130px]">
-                            {item.title}
-                          </span>
-                        )}
-                      </div>
+                      </button>
                     </div>
 
-                    {/* Back Face */}
                     <div
-                      className="absolute inset-0 w-full h-full overflow-hidden flex items-center justify-center bg-[#0e0e14] p-1.5"
+                      className="relative w-full h-full transition-transform duration-700 ease-out"
                       style={{
-                        backfaceVisibility: "hidden",
-                        transform: "rotateY(180deg)",
+                        transformStyle: "preserve-3d",
+                        transform: isFlipped ? "rotateY(180deg)" : "rotateY(0deg)",
                       }}
                     >
-                      <img
-                        src={item.backSrc!}
-                        alt={`${item.title} (Back)`}
-                        loading="lazy"
-                        className="relative z-10 max-w-full max-h-full w-auto h-auto object-contain object-center filter brightness-[1.03] contrast-[1.02]"
-                      />
-                      <div className="absolute bottom-2 left-2.5 right-2.5 flex items-center justify-between pointer-events-none z-20 bg-black/70 backdrop-blur-md px-2.5 py-1 rounded border border-white/10 shadow-md">
-                        <span className="font-mono text-[9px] text-emerald-400 font-semibold">
-                          {item.category?.includes('Logo') || item.category?.includes('Brand')
-                            ? 'Logo & Meaning'
-                            : 'Page 02 · Back'}
-                        </span>
-                        {item.title && (
-                          <span className="font-sans text-[10px] text-white truncate max-w-[130px]">
-                            {item.title}
+                      {/* Front Face */}
+                      <div
+                        className="absolute inset-0 w-full h-full overflow-hidden flex items-center justify-center bg-[#09090d] p-1.5"
+                        style={{ backfaceVisibility: "hidden" }}
+                      >
+                        <img
+                          src={item.src}
+                          alt={item.alt || item.title || ""}
+                          loading="lazy"
+                          className="relative z-10 max-w-full max-h-full w-auto h-auto object-contain object-center filter brightness-[1.03] contrast-[1.02]"
+                        />
+                        <div className="absolute bottom-2 left-2.5 right-2.5 flex items-center justify-between pointer-events-none z-20 bg-black/70 backdrop-blur-md px-2.5 py-1 rounded border border-white/10 shadow-md">
+                          <span className="font-mono text-[9px] text-amber-400 font-semibold">
+                            {item.category?.includes('Logo') || item.category?.includes('Brand')
+                              ? 'Brand Cards'
+                              : 'Page 01 · Front'}
                           </span>
-                        )}
+                          {item.title && (
+                            <span className="font-sans text-[10px] text-white truncate max-w-[130px]">
+                              {item.title}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Back Face */}
+                      <div
+                        className="absolute inset-0 w-full h-full overflow-hidden flex items-center justify-center bg-[#0e0e14] p-1.5"
+                        style={{
+                          backfaceVisibility: "hidden",
+                          transform: "rotateY(180deg)",
+                        }}
+                      >
+                        <img
+                          src={item.backSrc!}
+                          alt={`${item.title} (Back)`}
+                          loading="lazy"
+                          className="relative z-10 max-w-full max-h-full w-auto h-auto object-contain object-center filter brightness-[1.03] contrast-[1.02]"
+                        />
+                        <div className="absolute bottom-2 left-2.5 right-2.5 flex items-center justify-between pointer-events-none z-20 bg-black/70 backdrop-blur-md px-2.5 py-1 rounded border border-white/10 shadow-md">
+                          <span className="font-mono text-[9px] text-emerald-400 font-semibold">
+                            {item.category?.includes('Logo') || item.category?.includes('Brand')
+                              ? 'Logo & Meaning'
+                              : 'Page 02 · Back'}
+                          </span>
+                          {item.title && (
+                            <span className="font-sans text-[10px] text-white truncate max-w-[130px]">
+                              {item.title}
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ) : (
-                /* Standard non-flippable mobile item */
-                <>
-                  <div
-                    className="absolute inset-0 bg-cover bg-center filter blur-xl opacity-20 scale-110 pointer-events-none"
-                    style={{ backgroundImage: `url(${item.src})` }}
-                  />
-                  <img
-                    src={item.src}
-                    alt={item.alt || item.title || ""}
-                    loading="lazy"
-                    className="relative z-10 max-w-full max-h-full w-auto h-auto object-contain object-center"
-                  />
-                  <div className="absolute inset-0 z-15 bg-gradient-to-t from-black/80 via-transparent to-black/20 pointer-events-none" />
-                  <div className="absolute bottom-2.5 left-3 right-3 flex items-center justify-between pointer-events-none z-20">
-                    <span className="font-mono text-[9px] text-amber-400 bg-black/70 px-1.5 py-0.5 rounded">
-                      0{index + 1}
-                    </span>
-                    {item.title && (
-                      <span className="font-sans text-[11px] text-white truncate max-w-[180px]">
-                        {item.title}
+                ) : (
+                  /* Standard non-flippable mobile item */
+                  <>
+                    <div
+                      className="absolute inset-0 bg-cover bg-center filter blur-xl opacity-20 scale-110 pointer-events-none"
+                      style={{ backgroundImage: `url(${item.src})` }}
+                    />
+                    <img
+                      src={item.src}
+                      alt={item.alt || item.title || ""}
+                      loading="lazy"
+                      className="relative z-10 max-w-full max-h-full w-auto h-auto object-contain object-center"
+                    />
+                    <div className="absolute inset-0 z-15 bg-gradient-to-t from-black/80 via-transparent to-black/20 pointer-events-none" />
+                    <div className="absolute bottom-2.5 left-3 right-3 flex items-center justify-between pointer-events-none z-20">
+                      <span className="font-mono text-[9px] text-amber-400 bg-black/70 px-1.5 py-0.5 rounded">
+                        0{index + 1}
                       </span>
-                    )}
-                  </div>
-                </>
-              )}
-            </div>
-          );
-        })}
-      </div>
+                      {item.title && (
+                        <span className="font-sans text-[11px] text-white truncate max-w-[180px]">
+                          {item.title}
+                        </span>
+                      )}
+                    </div>
+                  </>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

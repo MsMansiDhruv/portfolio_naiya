@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
 import * as THREE from 'three'
 import gsap from 'gsap'
-import { ArrowLeft, ArrowRight, RefreshCw, HandMetal, LayoutGrid, RotateCw, Eye, ArrowUpRight } from 'lucide-react'
+import { ArrowLeft, ArrowRight, RefreshCw, HandMetal } from 'lucide-react'
 import { PORTFOLIO_PROJECTS, type ProjectCaseStudy } from '../data/portfolio'
 
 interface ThreeWorkShowcaseProps {
@@ -177,11 +177,6 @@ export function ThreeWorkShowcase({ onSelectProject }: ThreeWorkShowcaseProps) {
   const [activeIndex, setActiveIndex] = useState(0)
   const activeIndexRef = useRef(0)
 
-  // View Mode: 'orbit' (3D physical deck) or 'grid' (high-resolution quick scan)
-  const [viewMode, setViewMode] = useState<'orbit' | 'grid'>('orbit')
-  const viewModeRef = useRef<'orbit' | 'grid'>('orbit')
-  viewModeRef.current = viewMode
-
   // Responsive camera Z distance for mobile vs desktop
   const cameraZRef = useRef(9.6)
 
@@ -225,10 +220,10 @@ export function ThreeWorkShowcase({ onSelectProject }: ThreeWorkShowcaseProps) {
 
     const camera = new THREE.PerspectiveCamera(35, width / height, 0.1, 50)
     
-    // Responsive camera depth calculation
+    // Responsive camera depth calculation for mobile and desktop screens
     const updateCameraZ = (w: number, h: number) => {
       const aspect = w / h
-      const targetZ = aspect < 0.60 ? 14.5 : aspect < 0.85 ? 13.0 : aspect < 1.15 ? 11.2 : 9.6
+      const targetZ = aspect < 0.55 ? 12.4 : aspect < 0.68 ? 11.8 : aspect < 0.85 ? 11.0 : aspect < 1.15 ? 10.0 : 9.2
       cameraZRef.current = targetZ
       camera.position.z = targetZ
     }
@@ -297,7 +292,27 @@ export function ThreeWorkShowcase({ onSelectProject }: ThreeWorkShowcaseProps) {
       const meshHolder = new THREE.Group()
 
       // FRONT FACE: Project Cover (MeshBasicMaterial renders 100% true original colors with no lighting falloff)
-      const frontTex = textureLoader.load(project.coverImage)
+      const frontTex = textureLoader.load(project.coverImage, (tex) => {
+        if (tex.image && tex.image.width && tex.image.height) {
+          const imgAspect = tex.image.width / tex.image.height
+          const cardAspect = cardWidth / cardHeight
+          if (imgAspect > cardAspect) {
+            // Image is wider than card - cover fit horizontally with center crop
+            const repeatX = cardAspect / imgAspect
+            tex.repeat.set(repeatX, 1)
+            tex.offset.set((1 - repeatX) / 2, 0)
+          } else if (imgAspect < cardAspect) {
+            // Image is taller than card - cover fit vertically with center crop
+            const repeatY = imgAspect / cardAspect
+            tex.repeat.set(1, repeatY)
+            tex.offset.set(0, (1 - repeatY) / 2)
+          } else {
+            tex.repeat.set(1, 1)
+            tex.offset.set(0, 0)
+          }
+          tex.needsUpdate = true
+        }
+      })
       frontTex.colorSpace = THREE.SRGBColorSpace
       frontTex.minFilter = THREE.LinearFilter
       frontTex.magFilter = THREE.LinearFilter
@@ -488,9 +503,6 @@ export function ThreeWorkShowcase({ onSelectProject }: ThreeWorkShowcaseProps) {
     const animate = () => {
       animId = requestAnimationFrame(animate)
 
-      // Zero-GPU mode: Pause WebGL calculations when user is inspecting in Grid View
-      if (viewModeRef.current === 'grid') return
-
       // Smooth carousel rotation lerp
       rotationRef.current.current = THREE.MathUtils.lerp(
         rotationRef.current.current,
@@ -537,8 +549,9 @@ export function ThreeWorkShowcase({ onSelectProject }: ThreeWorkShowcaseProps) {
         const x = cardRadius * Math.sin(angle)
         // Circular sphere depth curve:
         const z = (Math.cos(angle) - 1) * 1.35
-        // Unified float offset keeps all cards in lockstep, with generous clearance below header text
-        const floatY = sharedFloat.y - 0.35
+        // Unified float offset keeps all cards in lockstep, comfortably cleared below header labels
+        const isMobileScreen = typeof window !== 'undefined' && window.innerWidth < 768
+        const floatY = sharedFloat.y - (isMobileScreen ? 0.65 : 0.20)
 
         // All cards (front 3 AND back cards) are visible in 3D depth!
         group.visible = true
@@ -571,7 +584,8 @@ export function ThreeWorkShowcase({ onSelectProject }: ThreeWorkShowcaseProps) {
 
         // SCALE HIERARCHY: Center card is bigger (1.08), side cards are (0.88), back cards are (0.72)
         const cosVal = Math.cos(angle)
-        const scale = 0.72 + (cosVal > 0 ? 0.16 : 0) + Math.max(0, cosVal - 0.5) * 0.40
+        const baseScale = 0.74 + (cosVal > 0 ? 0.16 : 0) + Math.max(0, cosVal - 0.5) * 0.38
+        const scale = isMobileScreen ? baseScale * 0.92 : baseScale
         group.scale.set(scale, scale, scale)
       })
 
@@ -607,225 +621,90 @@ export function ThreeWorkShowcase({ onSelectProject }: ThreeWorkShowcaseProps) {
   return (
     <div 
       style={{ touchAction: 'pan-y' }}
-      className={`relative w-full ${viewMode === 'orbit' ? 'h-[85vh] min-h-[560px] md:h-[88vh] md:min-h-[640px] max-h-[920px] overflow-hidden' : 'min-h-[85vh] h-auto overflow-visible'} select-none transition-all duration-500`}
+      className="relative w-full h-[530px] sm:h-[580px] md:h-[660px] lg:h-[720px] overflow-hidden select-none"
     >
       {/* 3D WebGL Canvas Mount Container */}
       <div 
         ref={mountRef} 
         style={{ touchAction: 'pan-y' }}
-        className={`absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing z-0 ${viewMode === 'orbit' ? 'block' : 'hidden pointer-events-none'}`} 
+        className="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing z-0 block" 
       />
 
-      {/* HEADER & VIEW TOGGLE BAR */}
-      <div className={`relative z-10 w-full p-4 sm:p-6 md:p-12 ${viewMode === 'orbit' ? 'pointer-events-none absolute inset-0 flex flex-col justify-between' : 'pointer-events-auto flex flex-col'}`}>
+      {/* HEADER & CONTROLS OVERLAY */}
+      <div className="relative z-10 w-full p-3 sm:p-5 md:p-8 lg:p-12 pointer-events-none absolute inset-0 flex flex-col justify-between">
         {/* Top Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4 pointer-events-auto">
           <div>
             <h2 className="section-glide-text text-2xl sm:text-3xl md:text-5xl font-serif text-white font-normal tracking-normal">
-              Selected <span className="italic text-amber-300">Works</span>
+              <span className="italic text-amber-300">Projects</span>
             </h2>
-            <div className="section-glide-text flex flex-wrap items-center gap-1.5 mt-2 text-[8px] sm:text-[9px] font-mono uppercase text-neutral-400">
-              <span className="px-2 sm:px-2.5 py-0.5 rounded-full bg-amber-500/20 border border-amber-400/50 text-amber-300 font-bold tracking-wider shadow-[0_0_12px_rgba(245,158,11,0.25)]">Social Media</span>
-              <span className="px-2 sm:px-2.5 py-0.5 rounded-full bg-amber-500/20 border border-amber-400/50 text-amber-300 font-bold tracking-wider shadow-[0_0_12px_rgba(245,158,11,0.25)]">Print Media</span>
-              <span className="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-neutral-300 font-semibold tracking-wider">Logo Design</span>
-              <span className="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-neutral-300 font-semibold tracking-wider">Packaging</span>
-              <span className="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-neutral-300 font-semibold tracking-wider">Pitch Decks</span>
-            </div>
           </div>
 
-          {/* Right Controls: Mode Toggle & Interactive Nudge */}
-          <div className="section-glide-text flex flex-wrap items-center gap-2 sm:gap-3">
-            {/* View Mode Toggle Pill (3D Orbit vs Clean Grid) */}
-            <div className="flex items-center bg-black/85 border border-white/15 p-1 rounded-full backdrop-blur-md shadow-2xl">
-              <button
-                type="button"
-                onClick={() => setViewMode('orbit')}
-                className={`flex items-center gap-1.5 px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full text-[9px] sm:text-[10px] font-mono transition-all cursor-pointer ${
-                  viewMode === 'orbit'
-                    ? 'bg-amber-400 text-black font-bold shadow-[0_0_14px_rgba(245,158,11,0.5)]'
-                    : 'text-neutral-400 hover:text-white'
-                }`}
-                title="Interactive 3D rotating card deck"
-              >
-                <RotateCw className="w-3 h-3" />
-                <span>3D ORBIT</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setViewMode('grid')}
-                className={`flex items-center gap-1.5 px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full text-[9px] sm:text-[10px] font-mono transition-all cursor-pointer ${
-                  viewMode === 'grid'
-                    ? 'bg-amber-400 text-black font-bold shadow-[0_0_14px_rgba(245,158,11,0.5)]'
-                    : 'text-neutral-400 hover:text-white'
-                }`}
-                title="Fast 2-second overview of all projects"
-              >
-                <LayoutGrid className="w-3 h-3" />
-                <span>GRID VIEW</span>
-              </button>
-            </div>
-
-            {/* Orbit Interaction Nudge */}
-            {viewMode === 'orbit' && (
-              <div className="hidden lg:flex items-center space-x-2.5 px-4 py-2 rounded-full bg-black/70 border border-amber-500/40 text-amber-300 text-[9px] font-mono tracking-widest backdrop-blur-md shadow-[0_0_20px_rgba(212,175,55,0.2)]">
-                <RefreshCw className="w-3 h-3 text-amber-400 animate-spin-slow" />
-                <span>HOVER CARD TO FLIP · CLICK TO INSPECT</span>
-              </div>
-            )}
+          {/* Right Controls: Interactive Nudge */}
+          <div className="section-glide-text hidden lg:flex items-center space-x-2.5 px-4 py-2 rounded-full bg-black/70 border border-amber-500/40 text-amber-300 text-[9px] font-mono tracking-widest backdrop-blur-md shadow-[0_0_20px_rgba(212,175,55,0.2)]">
+            <RefreshCw className="w-3 h-3 text-amber-400 animate-spin-slow" />
+            <span>HOVER CARD TO FLIP · CLICK TO INSPECT</span>
           </div>
         </div>
 
-        {/* ORBIT VIEW: Center-Right Large Ghost Number Parallax Background */}
-        {viewMode === 'orbit' && (
-          <div className="absolute right-4 sm:right-8 md:right-16 top-1/2 -translate-y-1/2 text-[8rem] sm:text-[12rem] md:text-[18rem] font-serif font-light text-white/[0.03] select-none pointer-events-none leading-none">
-            0{activeIndex + 1}
+        {/* Center-Right Large Ghost Number Parallax Background */}
+        <div className="absolute right-4 sm:right-8 md:right-16 top-1/2 -translate-y-1/2 text-[8rem] sm:text-[12rem] md:text-[18rem] font-serif font-light text-white/[0.03] select-none pointer-events-none leading-none">
+          0{activeIndex + 1}
+        </div>
+
+        {/* Bottom Navigation Dock */}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pointer-events-auto w-full pt-3 sm:pt-4">
+          {/* Subtle Swipe Nudge on Left */}
+          <div className="hidden sm:flex items-center space-x-2.5 px-4 py-2 rounded-full bg-black/60 border border-amber-500/30 text-amber-300 text-[9px] font-mono tracking-widest backdrop-blur-md shadow-[0_0_20px_rgba(212,175,55,0.2)]">
+            <HandMetal className="w-3.5 h-3.5 text-amber-400 animate-bounce" />
+            <span>SWIPE / DRAG TO ORBIT 3D CAROUSEL</span>
           </div>
-        )}
 
-        {/* ORBIT VIEW: Bottom Navigation Dock */}
-        {viewMode === 'orbit' && (
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pointer-events-auto w-full pt-3 sm:pt-4">
-            {/* Subtle Swipe Nudge on Left */}
-            <div className="hidden sm:flex items-center space-x-2.5 px-4 py-2 rounded-full bg-black/60 border border-amber-500/30 text-amber-300 text-[9px] font-mono tracking-widest backdrop-blur-md shadow-[0_0_20px_rgba(212,175,55,0.2)]">
-              <HandMetal className="w-3.5 h-3.5 text-amber-400 animate-bounce" />
-              <span>SWIPE / DRAG TO ORBIT 3D CAROUSEL</span>
-            </div>
+          {/* Active Card Quick Indicator & Navigation Controls */}
+          <div className="flex items-center justify-between sm:justify-end w-full sm:w-auto gap-2 sm:gap-3">
+            <button
+              onClick={prevCard}
+              className="w-9 h-9 sm:w-11 sm:h-11 rounded-full border border-white/15 bg-black/60 hover:bg-white/10 text-white flex items-center justify-center transition-colors backdrop-blur-md cursor-pointer hover:border-amber-400 shrink-0"
+              aria-label="Previous Project"
+            >
+              <ArrowLeft className="w-4 h-4 text-neutral-300" />
+            </button>
 
-            {/* Active Card Quick Indicator & Navigation Controls */}
-            <div className="flex items-center justify-between sm:justify-end w-full sm:w-auto gap-2 sm:gap-3">
-              <button
-                onClick={prevCard}
-                className="w-9 h-9 sm:w-11 sm:h-11 rounded-full border border-white/15 bg-black/60 hover:bg-white/10 text-white flex items-center justify-center transition-colors backdrop-blur-md cursor-pointer hover:border-amber-400 shrink-0"
-                aria-label="Previous Project"
-              >
-                <ArrowLeft className="w-4 h-4 text-neutral-300" />
-              </button>
-
-              {/* Pagination Track Dots */}
-              <div className="flex items-center space-x-2 sm:space-x-3 bg-black/80 border border-white/15 px-3 sm:px-4 py-2 sm:py-2.5 rounded-full backdrop-blur-md shadow-xl max-w-[220px] sm:max-w-none overflow-hidden">
-                <span className="font-mono text-[11px] sm:text-xs font-semibold text-white/95 mr-1 sm:mr-2 truncate">
-                  {activeProject.title}
-                </span>
-                <div className="flex items-center space-x-1.5 shrink-0">
-                  {PORTFOLIO_PROJECTS.map((_, dotIdx) => (
-                    <button
-                      key={dotIdx}
-                      onClick={() => rotateTo(dotIdx)}
-                      className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
-                        activeIndex === dotIdx 
-                          ? 'w-4 sm:w-6 bg-amber-400 shadow-[0_0_8px_rgba(245,158,11,0.6)]' 
-                          : 'w-2 bg-white/20 hover:bg-white/40'
-                      }`}
-                      aria-label={`Go to slide ${dotIdx + 1}`}
-                    />
-                  ))}
-                </div>
-              </div>
-
-              <button
-                onClick={nextCard}
-                className="w-9 h-9 sm:w-11 sm:h-11 rounded-full border border-white/15 bg-black/60 hover:bg-white/10 text-white flex items-center justify-center transition-colors backdrop-blur-md cursor-pointer hover:border-amber-400 shrink-0"
-                aria-label="Next Project"
-              >
-                <ArrowRight className="w-4 h-4 text-neutral-300" />
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* GRID VIEW: High-Resolution Scan Mode for Busy Creative Directors & Recruiters */}
-        {viewMode === 'grid' && (
-          <div className="w-full pt-8 pb-12 pointer-events-auto">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-              {PORTFOLIO_PROJECTS.map((project, idx) => (
-                <div
-                  key={project.id}
-                  onClick={() => onSelectProject(project)}
-                  className="group relative bg-[#0c0c0e] border border-white/10 hover:border-amber-400/50 rounded-2xl overflow-hidden transition-all duration-500 hover:-translate-y-1.5 hover:shadow-[0_20px_40px_rgba(212,175,55,0.12)] flex flex-col cursor-pointer"
-                >
-                  {/* Project Cover Image */}
-                  <div className="relative aspect-[16/11] w-full overflow-hidden bg-black/40">
-                    <img
-                      src={project.coverImage}
-                      alt={project.title}
-                      className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"
-                      loading="lazy"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent opacity-80 group-hover:opacity-60 transition-opacity" />
-
-                    {/* Top Discipline Tag & Number */}
-                    <div className="absolute top-3 left-3 right-3 flex items-center justify-between text-[10px] font-mono">
-                      <span className="px-2.5 py-1 rounded-full bg-black/75 border border-amber-400/40 text-amber-300 font-semibold backdrop-blur-md uppercase tracking-wider">
-                        {project.category}
-                      </span>
-                      <span className="px-2 py-0.5 rounded bg-black/60 text-neutral-400 font-bold backdrop-blur-md">
-                        0{idx + 1}
-                      </span>
-                    </div>
-
-                    {/* Hover Inspect CTA Overlay */}
-                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/40 backdrop-blur-[2px]">
-                      <div className="flex items-center space-x-2 px-4 py-2 rounded-full bg-amber-400 text-black font-semibold text-xs font-sans tracking-wide shadow-xl transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-                        <Eye className="w-3.5 h-3.5" />
-                        <span>Inspect Case Study</span>
-                        <ArrowUpRight className="w-3.5 h-3.5" />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Card Content & Metadata */}
-                  <div className="p-5 sm:p-6 flex-1 flex flex-col justify-between">
-                    <div>
-                      <div className="flex items-center justify-between text-xs font-mono text-neutral-400 mb-2">
-                        <span className="text-amber-400/90 font-medium">{project.category.toUpperCase()}</span>
-                        <span className="text-neutral-500">[{project.number}]</span>
-                      </div>
-
-                      <h3 className="font-serif text-2xl font-normal tracking-wide text-white group-hover:text-amber-300 transition-colors mb-2">
-                        {project.title}
-                      </h3>
-
-                      <p className="text-xs sm:text-sm text-neutral-400 font-light leading-relaxed mb-4 line-clamp-2">
-                        {project.tagline || project.description}
-                      </p>
-                    </div>
-
-                    <div>
-                      {/* Deliverables Tags */}
-                      <div className="flex flex-wrap gap-1.5 pt-3 border-t border-white/5 mb-4">
-                        {project.deliverables.slice(0, 3).map((item, dIdx) => (
-                          <span
-                            key={dIdx}
-                            className="px-2 py-0.5 rounded text-[10px] font-mono bg-white/5 border border-white/10 text-neutral-300"
-                          >
-                            {item}
-                          </span>
-                        ))}
-                      </div>
-
-                      <div className="flex items-center justify-between text-xs font-mono text-neutral-300 group-hover:text-amber-400 transition-colors pt-1">
-                        <span className="font-medium tracking-wide">VIEW CASE STUDY</span>
-                        <ArrowUpRight className="w-4 h-4 transform group-hover:translate-x-1 group-hover:-translate-y-0.5 transition-transform" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Switch Back to Orbit */}
-            <div className="mt-12 text-center">
+            {/* Pagination Track Dots */}
+            <div className="flex items-center space-x-2 sm:space-x-3 bg-black/80 border border-white/15 px-3 sm:px-4 py-2 sm:py-2.5 rounded-full backdrop-blur-md shadow-xl max-w-[220px] sm:max-w-none overflow-hidden">
               <button
                 type="button"
-                onClick={() => setViewMode('orbit')}
-                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/15 text-amber-300 hover:text-amber-200 text-xs font-mono tracking-wider transition-all cursor-pointer backdrop-blur-md"
+                onClick={() => onSelectProject(activeProject)}
+                className="font-mono text-[11px] sm:text-xs font-semibold text-white/95 hover:text-amber-300 mr-1 sm:mr-2 truncate cursor-pointer transition-colors"
+                title="Open project case study"
               >
-                <RotateCw className="w-3.5 h-3.5 text-amber-400 animate-spin-slow" />
-                <span>SWITCH BACK TO 3D ORBIT SPHERE</span>
+                {activeProject.title}
               </button>
+              <div className="flex items-center space-x-1.5 shrink-0">
+                {PORTFOLIO_PROJECTS.map((_, dotIdx) => (
+                  <button
+                    key={dotIdx}
+                    onClick={() => rotateTo(dotIdx)}
+                    className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
+                      activeIndex === dotIdx 
+                        ? 'w-4 sm:w-6 bg-amber-400 shadow-[0_0_8px_rgba(245,158,11,0.6)]' 
+                        : 'w-2 bg-white/20 hover:bg-white/40'
+                    }`}
+                    aria-label={`Go to slide ${dotIdx + 1}`}
+                  />
+                ))}
+              </div>
             </div>
+
+            <button
+              onClick={nextCard}
+              className="w-9 h-9 sm:w-11 sm:h-11 rounded-full border border-white/15 bg-black/60 hover:bg-white/10 text-white flex items-center justify-center transition-colors backdrop-blur-md cursor-pointer hover:border-amber-400 shrink-0"
+              aria-label="Next Project"
+            >
+              <ArrowRight className="w-4 h-4 text-neutral-300" />
+            </button>
           </div>
-        )}
+        </div>
       </div>
     </div>
   )

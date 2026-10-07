@@ -43,7 +43,7 @@ class DialogueAudioManager {
   }
 
   /**
-   * Initializes the single HTMLAudioElement and attaches Web Audio API GainNode
+   * Initializes the single HTMLAudioElement
    */
   private initAudioElement() {
     this.audio = new Audio();
@@ -55,8 +55,13 @@ class DialogueAudioManager {
       this.isPlaying = false;
       this.currentClipUrl = null;
     });
+  }
 
-    // Initialize Web Audio API for seamless click-free gain ramping
+  /**
+   * Lazily initializes Web Audio API nodes upon user interaction
+   */
+  private ensureAudioContext() {
+    if (this.audioCtx || !this.audio) return;
     try {
       const AudioContextClass =
         window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
@@ -70,7 +75,6 @@ class DialogueAudioManager {
         this.gainNode.connect(this.audioCtx.destination);
       }
     } catch {
-      // Fallback gracefully to direct HTMLAudioElement volume interpolation
       this.audioCtx = null;
       this.gainNode = null;
     }
@@ -82,6 +86,7 @@ class DialogueAudioManager {
   private initUserInteractionListeners() {
     const handleInteraction = () => {
       this.hasUserInteracted = true;
+      this.ensureAudioContext();
 
       // Resume AudioContext if suspended by browser autoplay policy
       if (this.audioCtx && this.audioCtx.state === "suspended") {

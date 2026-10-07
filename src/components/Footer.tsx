@@ -4,7 +4,7 @@ import { TextReveal } from './TextReveal'
 
 const LINKS = [
   { label: 'Space', href: '#top' },
-  { label: 'Work', href: '#work' },
+  { label: 'Projects', href: '#work' },
   { label: 'About', href: '#about' },
   { label: 'Method', href: '#method' },
   { label: 'Contact', href: '#contact' },

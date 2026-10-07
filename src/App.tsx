@@ -26,21 +26,17 @@ export default function App() {
     })
 
     const lenis = new Lenis({
-      duration: isTouch ? 0.9 : 1.1,
+      duration: isTouch ? 0.8 : 1.0,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: 'vertical',
       gestureOrientation: 'vertical',
       smoothWheel: true,
-      wheelMultiplier: 1.0,
+      wheelMultiplier: 0.95,
       touchMultiplier: 1.0,
       syncTouch: false,
     })
 
-    lenis.on('scroll', (e: any) => {
-      ScrollTrigger.update()
-      const velocity = Math.max(-20, Math.min(20, e?.velocity || 0))
-      document.documentElement.style.setProperty('--scroll-velocity', `${velocity}`)
-    })
+    lenis.on('scroll', ScrollTrigger.update)
     ;(window as any).__lenis = lenis
     lenisRef.current = lenis
 
@@ -48,7 +44,7 @@ export default function App() {
       lenis.raf(time * 1000)
     }
     gsap.ticker.add(updateLenis)
-    gsap.ticker.lagSmoothing(500, 33)
+    gsap.ticker.lagSmoothing(0)
 
     // Recalculate ScrollTrigger once DOM layout stabilizes
     const refreshTimer = setTimeout(() => {

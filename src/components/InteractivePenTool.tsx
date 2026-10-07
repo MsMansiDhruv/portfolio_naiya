@@ -29,22 +29,17 @@ interface ShatterInstance {
   sparks: Spark[]
 }
 
-// Robust helper: verifies whether the clicked target is an interactive button, link, or 3D canvas
+// Robust helper: verifies whether the clicked target is an interactive button, link, or open modal
 function isInteractiveElement(target: HTMLElement | null): boolean {
   if (!target) return false
 
   // 1. Direct interactive UI controls & cards
-  if (target.closest('button, a, input, textarea, select, label, [role="button"], [role="tab"], [role="dialog"], [data-no-pen]')) {
+  if (target.closest('button, a, input, textarea, select, label, [role="button"], [role="tab"], [role="dialog"], .modal, [data-modal]')) {
     return true
   }
 
-  // 2. 3D WebGL Canvas elements (so user can orbit Three.js without dropping pen vertices)
-  if (target.closest('canvas')) {
-    return true
-  }
-
-  // 3. Header navigation, capsules, and active modals
-  if (target.closest('header, nav, .main-header-nav, .site-nav, .modal, [data-modal]')) {
+  // 2. Navigation bar drawer
+  if (target.closest('.main-header-nav, .site-nav')) {
     return true
   }
 
@@ -55,13 +50,9 @@ export function InteractivePenTool() {
   const [isSupported, setIsSupported] = useState(false)
 
   useEffect(() => {
-    // Only enable pen tool on desktop devices with fine pointer (mouse)
-    const isTouch = 
-      typeof window !== 'undefined' && 
-      (window.matchMedia('(pointer: coarse)').matches || 
-       ('ontouchstart' in window) || 
-       window.innerWidth < 1024)
-    setIsSupported(!isTouch)
+    // Only enable interactive pen vector tool on fine pointer devices (desktop/mouse)
+    const hasFinePointer = typeof window !== 'undefined' && window.matchMedia('(pointer: fine)').matches
+    setIsSupported(hasFinePointer)
   }, [])
 
   const requestRef = useRef<number>(0)
@@ -249,22 +240,11 @@ export function InteractivePenTool() {
     let mouseMoved = false
 
     const handleMouseMove = (e: MouseEvent) => {
-      const target = e.target as HTMLElement | null
-      const isOverNoPenZone = isInteractiveElement(target)
-
-      if (isOverNoPenZone) {
-        // Suppress pen trail and guide lines over navigation and interactive elements
-        trailPointsRef.current = []
-        if (trailPathRef.current) {
-          trailPathRef.current.setAttribute('d', '')
-        }
-        setHoverPos({ x: -100, y: -100 })
-        setIsNearStartVertex(false)
-        return
-      }
-
       mouseRef.current = { x: e.clientX, y: e.clientY }
       mouseMoved = true
+
+      const target = e.target as HTMLElement | null
+      const isOverInteractive = isInteractiveElement(target)
 
       if (currentPathRef.current.length > 0) {
         setHoverPos({ x: e.clientX, y: e.clientY })

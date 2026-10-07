@@ -447,31 +447,28 @@ export function TactileSpatialGeometryHUD() {
   }, [])
 
   return (
-    <div ref={containerRef} className="relative w-full h-full min-h-[460px] md:min-h-[580px] flex flex-col justify-between select-none pointer-events-auto p-2 sm:p-3 md:p-4">
+    <div ref={containerRef} className="relative w-full h-full min-h-[420px] md:min-h-[580px] flex flex-col justify-between select-none pointer-events-auto p-2 sm:p-3 md:p-4">
       {/* 1. TOP HEADER HUD OVERLAY & TOP-RIGHT 3D CANVAS BOX */}
-      <div className="flex flex-col md:flex-row md:items-start justify-between gap-3 md:gap-4 z-20 pointer-events-none pt-4 sm:pt-8 md:pt-12 lg:pt-14">
+      <div className="flex flex-col md:flex-row md:items-start justify-between gap-2.5 sm:gap-3 md:gap-4 z-20 pointer-events-none pt-2 sm:pt-8 md:pt-12 lg:pt-14">
         <div className="max-w-xl">
-          <div className="flex items-center space-x-2 text-[9px] font-mono tracking-[0.25em] text-amber-400 uppercase mb-1.5 md:mb-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
-            <span>CHAPTER 02 • DESIGN METHODOLOGY</span>
-          </div>
-          <h2 className="text-2xl sm:text-3xl md:text-5xl font-serif text-white font-light leading-tight">
-            Tactile geometry. <span className="italic text-amber-300">Engineered hierarchy.</span>
+          <h2 className="text-xl sm:text-3xl md:text-5xl font-serif text-white font-light leading-tight">
+            Built on the basics. <br/>
+            <span className="italic text-amber-300">Made with intention.</span>
           </h2>
-          <p className="text-[11px] sm:text-xs md:text-sm text-neutral-400 font-light max-w-sm leading-relaxed mt-1.5 md:mt-2">
+          <p className="hidden xs:block text-[10px] sm:text-xs md:text-sm text-neutral-400 font-light max-w-sm leading-relaxed mt-1 md:mt-2">
             Packaging box layouts, baseline typography grids, and press-verified proofs.
           </p>
         </div>
 
         {/* 3D Canvas Box */}
-        <div className="relative pointer-events-auto flex flex-col items-start sm:items-end md:self-start mt-2 sm:mt-0">
+        <div className="relative pointer-events-auto flex flex-col items-start sm:items-end md:self-start mt-1 sm:mt-0">
           <div 
             ref={mountRef} 
-            className="w-[190px] sm:w-[240px] md:w-[300px] h-[135px] sm:h-[175px] md:h-[210px] cursor-grab active:cursor-grabbing rounded-2xl bg-black/45 border border-white/10 backdrop-blur-md shadow-[0_20px_40px_rgba(0,0,0,0.6)]" 
+            className="w-[130px] sm:w-[220px] md:w-[300px] h-[90px] sm:h-[155px] md:h-[210px] cursor-grab active:cursor-grabbing rounded-xl sm:rounded-2xl bg-black/55 border border-white/10 backdrop-blur-md shadow-[0_15px_30px_rgba(0,0,0,0.6)]" 
           />
           {/* Sub-box badge */}
-          <div className="flex items-center space-x-1.5 px-2.5 sm:px-3 py-1 rounded-full bg-black/75 border border-amber-500/50 text-amber-300 text-[8px] font-mono tracking-widest backdrop-blur-md mt-1.5 shadow-[0_0_15px_rgba(212,175,55,0.25)] transition-all duration-300">
-            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+          <div className="flex items-center space-x-1.5 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full bg-black/75 border border-amber-500/50 text-amber-300 text-[7px] sm:text-[8px] font-mono tracking-widest backdrop-blur-md mt-1 shadow-[0_0_12px_rgba(212,175,55,0.25)] transition-all duration-300">
+            <span className="w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-amber-400 animate-pulse" />
             <span className="font-bold text-white uppercase">{PHASES[activePhaseIndex].number} {PHASES[activePhaseIndex].phase}</span>
             <span className="text-amber-500/50">•</span>
             <span className="text-amber-200">
@@ -485,38 +482,38 @@ export function TactileSpatialGeometryHUD() {
       </div>
 
       {/* 2. BOTTOM RIGHT TACTILE 4-PHASE SWITCHER DOCK */}
-      <div className="z-20 w-full flex justify-end items-end pointer-events-auto mt-auto pt-4 md:pt-6">
-        <div className="flex flex-col gap-1.5 sm:gap-2 w-full sm:w-auto shrink-0">
-          <div className="flex items-center justify-between px-1 text-[9px] font-mono tracking-wider uppercase mb-0.5">
-            <div className="flex items-center space-x-1.5 text-amber-400">
-              <MousePointerClick className="w-3.5 h-3.5 animate-bounce" />
+      <div className="z-20 w-full flex justify-end items-end pointer-events-auto mt-auto pt-2 md:pt-6 pb-6 sm:pb-3 mb-2 sm:mb-0">
+        <div className="flex flex-col gap-1 sm:gap-2 w-full sm:w-auto shrink-0">
+          <div className="flex items-center justify-between px-1 text-[8px] sm:text-[9px] font-mono tracking-wider uppercase mb-0.5">
+            <div className="flex items-center space-x-1 sm:space-x-1.5 text-amber-400">
+              <MousePointerClick className="w-3 h-3 sm:w-3.5 sm:h-3.5 animate-bounce" />
               <span>SELECT PHASE</span>
             </div>
-            <span className="text-[8px] text-amber-300/80 font-mono tracking-normal ml-3">UPDATES 3D CUBOID</span>
+            <span className="text-[7.5px] sm:text-[8px] text-amber-300/80 font-mono tracking-normal ml-3">UPDATES 3D CUBOID</span>
           </div>
-          <div className="flex sm:grid sm:grid-cols-2 lg:flex lg:flex-col gap-1.5 sm:gap-2 shrink-0 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
+          <div className="grid grid-cols-2 lg:flex lg:flex-col gap-1 sm:gap-2 shrink-0">
             {PHASES.map((p, idx) => {
               const isActive = activePhaseIndex === idx
               return (
                 <button
                   key={p.id}
                   onClick={() => selectPhase(idx)}
-                  className={`flex items-center justify-between space-x-3 px-3 sm:px-4 py-2 sm:py-3 rounded-xl cursor-pointer transition-all duration-300 border backdrop-blur-md text-left shrink-0 ${
+                  className={`flex items-center justify-between space-x-2 sm:space-x-3 px-2 sm:px-4 py-1.5 sm:py-3 rounded-lg sm:rounded-xl cursor-pointer transition-all duration-300 border backdrop-blur-md text-left shrink-0 ${
                     isActive
                       ? 'bg-neutral-900 border-amber-400/80 shadow-[0_4px_20px_rgba(212,175,55,0.2)] -translate-y-0.5'
                       : 'bg-black/50 border-white/10 hover:border-white/20 text-neutral-400 hover:text-white'
                   }`}
                 >
-                  <div className="flex items-center space-x-2">
-                    <span className={`font-mono text-xs font-bold ${isActive ? 'text-amber-400' : 'text-neutral-500'}`}>
+                  <div className="flex items-center space-x-1.5 sm:space-x-2">
+                    <span className={`font-mono text-[10px] sm:text-xs font-bold ${isActive ? 'text-amber-400' : 'text-neutral-500'}`}>
                       {p.number}
                     </span>
-                    <span className="font-mono text-[9px] sm:text-[10px] uppercase tracking-wider">
+                    <span className="font-mono text-[8px] sm:text-[10px] uppercase tracking-wider">
                       {p.phase}
                     </span>
                   </div>
                   {isActive && (
-                    <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse ml-1.5" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse ml-1" />
                   )}
                 </button>
               )

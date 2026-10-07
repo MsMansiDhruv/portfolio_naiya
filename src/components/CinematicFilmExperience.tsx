@@ -104,21 +104,18 @@ export function CinematicFilmExperience({ isLoaded = false }: CinematicFilmExper
       gsap.to('.contact-reveal', {
         y: 0,
         opacity: 1,
-        duration: 1.2,
-        stagger: 0.15,
+        duration: 1.0,
+        stagger: 0.12,
         ease: 'power3.out',
         scrollTrigger: {
           trigger: '.contact-panel-wrapper',
-          start: 'top 75%',
-          toggleActions: 'play none none reverse'
+          start: 'top 85%',
+          toggleActions: 'play none none none',
+          once: true,
         }
       })
 
       // 2. Lenis Motion Text Kinetic Gliding Engine
-      // As the user scrolls down, each element smoothly glides up from below (with micro-blur dissolve).
-      // While active in the central viewport reading zone, it holds 100% sharp, solid, and illuminated.
-      // When scrolling past towards the next section, it gracefully glides out upwards.
-      // Reversible in real-time when scrolling back up with Lenis momentum.
       const registerLenisGlide = (selector: string) => {
         const elements = document.querySelectorAll(selector)
         if (elements.length === 0) return
@@ -127,20 +124,19 @@ export function CinematicFilmExperience({ isLoaded = false }: CinematicFilmExper
           gsap.fromTo(el,
             {
               opacity: 0,
-              y: 28,
-              filter: 'blur(3px)',
-              willChange: 'transform, opacity, filter',
+              y: 18,
+              willChange: 'transform, opacity',
             },
             {
               opacity: 1,
               y: 0,
-              filter: 'blur(0px)',
-              duration: 0.9,
+              duration: 0.75,
               ease: 'power2.out',
               scrollTrigger: {
                 trigger: el,
-                start: 'top 92%',
-                toggleActions: 'play none none reverse',
+                start: 'top 95%',
+                toggleActions: 'play none none none',
+                once: true,
               }
             }
           )
@@ -163,7 +159,7 @@ export function CinematicFilmExperience({ isLoaded = false }: CinematicFilmExper
       gsap.utils.toArray('.stack-section').forEach((section: any) => {
         // A. Section Reveal & Atmosphere on Scroll
         gsap.fromTo(section,
-          { opacity: 0.85 },
+          { opacity: 0.88 },
           {
             opacity: 1,
             ease: 'power2.out',
@@ -171,7 +167,7 @@ export function CinematicFilmExperience({ isLoaded = false }: CinematicFilmExper
               trigger: section,
               start: 'top 95%',
               end: 'top 65%',
-              scrub: 0.8,
+              scrub: 0.3,
               onEnter: () => dialogueAudioManager.stopCurrentDialogue(250),
               onEnterBack: () => dialogueAudioManager.stopCurrentDialogue(250),
             }
@@ -182,16 +178,16 @@ export function CinematicFilmExperience({ isLoaded = false }: CinematicFilmExper
         const ambientGlows = section.querySelectorAll('.ambient-glow-pool')
         if (ambientGlows.length > 0) {
           gsap.fromTo(ambientGlows,
-            { y: 45, opacity: 0.65 },
+            { y: 35, opacity: 0.7 },
             {
-              y: -45,
+              y: -35,
               opacity: 1,
               ease: 'none',
               scrollTrigger: {
                 trigger: section,
                 start: 'top bottom',
                 end: 'bottom top',
-                scrub: 1.2,
+                scrub: 0.5,
               }
             }
           );
@@ -201,18 +197,19 @@ export function CinematicFilmExperience({ isLoaded = false }: CinematicFilmExper
       // 4. Contact Cards Stagger Reveal
       gsap.utils.toArray('.contact-card').forEach((card: any, i) => {
         gsap.fromTo(card,
-          { opacity: 0, y: 40, scale: 0.95 },
+          { opacity: 0, y: 30, scale: 0.98 },
           {
             opacity: 1,
             y: 0,
             scale: 1,
-            duration: 1,
-            delay: i * 0.2,
+            duration: 0.8,
+            delay: i * 0.15,
             ease: 'power3.out',
             scrollTrigger: {
               trigger: '.contact-panel-wrapper',
-              start: 'top 60%',
-              toggleActions: 'play none none reverse'
+              start: 'top 75%',
+              toggleActions: 'play none none none',
+              once: true,
             }
           }
         );
@@ -221,18 +218,18 @@ export function CinematicFilmExperience({ isLoaded = false }: CinematicFilmExper
       // 5. Testimonial Cards Stagger Reveal
       gsap.utils.toArray('.testimonial-card').forEach((card: any, i) => {
         gsap.fromTo(card,
-          { opacity: 0, y: 50, rotationX: 8 },
+          { opacity: 0, y: 35 },
           {
             opacity: 1,
             y: 0,
-            rotationX: 0,
-            duration: 1.2,
-            delay: i * 0.1,
+            duration: 0.9,
+            delay: i * 0.08,
             ease: 'power3.out',
             scrollTrigger: {
               trigger: card,
-              start: 'top 95%',
-              toggleActions: 'play none none reverse'
+              start: 'top 96%',
+              toggleActions: 'play none none none',
+              once: true,
             }
           }
         );
@@ -250,7 +247,7 @@ export function CinematicFilmExperience({ isLoaded = false }: CinematicFilmExper
 
     if (section === 'origins' || section === 'origin' || section === 'hero') {
       if (lenis) {
-        lenis.scrollTo(0, { duration: 1.2, immediate: false })
+        lenis.scrollTo(0, { duration: 1.0, immediate: false })
       } else {
         window.scrollTo({ top: 0, behavior: 'smooth' })
       }
@@ -265,10 +262,9 @@ export function CinematicFilmExperience({ isLoaded = false }: CinematicFilmExper
 
     if (targetEl) {
       if (lenis) {
-        lenis.scrollTo(targetEl, { offset: -20, duration: 1.2 })
+        lenis.scrollTo(targetEl, { offset: 0, duration: 1.0 })
       } else {
-        const top = targetEl.getBoundingClientRect().top + window.scrollY - 20
-        window.scrollTo({ top, behavior: 'smooth' })
+        targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' })
       }
     }
   }
@@ -301,11 +297,11 @@ export function CinematicFilmExperience({ isLoaded = false }: CinematicFilmExper
   }
 
   const cursorStyle = `
-    @media (pointer: fine) and (min-width: 1024px) {
+    @media (pointer: fine) {
       *, body, html {
         cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M2 2 L9 23 L14 17 L25 28 L28 25 L17 14 L23 9 Z" fill="%230A0A0A" stroke="%23D4AF37" stroke-width="1.8" stroke-linejoin="round"/><path d="M2 2 L14 14" stroke="%23D4AF37" stroke-width="1.5"/><circle cx="14" cy="14" r="1.8" fill="%23D4AF37"/><circle cx="2" cy="2" r="1.5" fill="%23FFFFFF"/></svg>') 2 2, crosshair !important;
       }
-      button, a, input, textarea, select, canvas, [role="button"], [role="tab"], .cursor-pointer {
+      button, a, input, textarea, select, [role="button"], [role="tab"], .cursor-pointer {
         cursor: pointer !important;
       }
     }
@@ -352,7 +348,7 @@ export function CinematicFilmExperience({ isLoaded = false }: CinematicFilmExper
               <div className="hero-gold-rule opacity-0 w-24 sm:w-32 h-[1.5px] bg-gradient-to-r from-amber-400 via-amber-300 to-transparent mb-4 sm:mb-5 shadow-[0_0_12px_rgba(245,158,11,0.6)]" />
 
               <p className="hero-manifesto opacity-0 text-xs sm:text-sm md:text-base text-neutral-200 font-light leading-relaxed max-w-md">
-                There's more — Dive into my space of <DoodleHighlight type="underline" delay={0.9}>selected work</DoodleHighlight> and experiments I couldn’t leave alone.
+                Dive into my space of <DoodleHighlight type="underline" delay={0.9}>projects</DoodleHighlight> and experiments I couldn’t leave alone.
               </p>
             </div>
 
@@ -385,7 +381,7 @@ export function CinematicFilmExperience({ isLoaded = false }: CinematicFilmExper
         roundedTop={true}
         data-witty-index={2}
         overlay={
-          <div className="absolute inset-0 z-50 p-6 md:p-12 lg:p-14 pointer-events-none flex flex-col justify-between">
+          <div className="absolute inset-0 z-50 p-3 sm:p-6 md:p-12 lg:p-14 pointer-events-none flex flex-col justify-between">
             <TactileSpatialGeometryHUD />
           </div>
         }
@@ -411,8 +407,8 @@ export function CinematicFilmExperience({ isLoaded = false }: CinematicFilmExper
           <div className="absolute inset-0 z-50 p-6 sm:p-8 md:p-12 lg:p-14 pointer-events-none flex flex-col justify-between">
             <div className="w-full max-w-sm sm:max-w-md md:w-[460px] pointer-events-none pt-12 sm:pt-14 md:pt-16">
               <h2 className="text-2xl sm:text-3xl md:text-5xl font-serif text-white font-light mb-3 sm:mb-4 leading-snug">
-                Visual systems built for the real world — <br/>
-                <span className="italic text-amber-300">from retail shelves to boardrooms.</span>
+                Design is everywhere. <br/>
+                <span className="italic text-amber-300">Sometimes noticed, sometimes felt.</span>
               </h2>
             </div>
 
@@ -522,23 +518,23 @@ export function CinematicFilmExperience({ isLoaded = false }: CinematicFilmExper
         roundedTop={true}
         data-witty-index={6}
         overlay={
-          <div className="absolute inset-0 z-50 p-6 sm:p-8 md:p-12 lg:p-14 pointer-events-none flex flex-col justify-between">
-            {/* Center Content Row: Tools of the Trade on left, Close Headline on right */}
-            <div className="w-full flex flex-col md:flex-row items-center justify-between gap-6 sm:gap-8 my-auto pt-8 md:pt-0 pointer-events-none">
+          <div className="absolute inset-0 z-50 p-4 sm:p-8 md:p-12 lg:p-14 pointer-events-none flex flex-col justify-between">
+            {/* Center Content Row: Tools of the Trade on left, Close Headline on right - positioned at bottom on mobile so face is visible */}
+            <div className="w-full flex flex-col md:flex-row items-start md:items-center justify-between gap-4 sm:gap-8 mt-auto md:my-auto pb-10 sm:pb-8 md:pb-0 pt-16 md:pt-0 pointer-events-none">
               {/* LEFT: GSAP ANIMATED SKILL ICONS (Tools of the Trade) */}
               <InteractiveSkillIcons />
 
               {/* RIGHT: THE CLOSE HEADLINE */}
-              <div className="w-full max-w-sm md:w-[380px] text-left md:text-right pointer-events-auto self-start md:self-center">
-                <h2 className="text-2xl sm:text-3xl md:text-5xl font-serif text-white font-normal tracking-normal leading-tight">
-                  Design that communicates. <br/>
-                  <span className="italic text-amber-300">Crafted with purpose.</span>
+              <div className="w-full max-w-md md:w-auto text-left md:text-right pointer-events-auto self-start md:self-center">
+                <h2 className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-serif text-white font-normal tracking-normal leading-tight">
+                  <span className="block whitespace-nowrap">The details are what</span>
+                  <span className="italic text-amber-300 block whitespace-nowrap">make it matter.</span>
                 </h2>
               </div>
             </div>
 
             {/* Bottom Right Contextual Animated Action Indicator (Matches Scene 1 & Scene 3 unified format) */}
-            <div className="w-full flex justify-end pointer-events-auto pb-4">
+            <div className="w-full flex justify-end pointer-events-auto pb-2 sm:pb-4">
               <div className="flex items-center space-x-2.5 px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full bg-black/60 border border-amber-500/30 text-amber-300 text-[8px] sm:text-[9px] font-mono tracking-widest backdrop-blur-md shadow-[0_0_20px_rgba(212,175,55,0.2)]">
                 <Mouse className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-amber-400 animate-bounce" />
                 <span>SCROLL DOWN TO GET IN TOUCH</span>
@@ -549,16 +545,16 @@ export function CinematicFilmExperience({ isLoaded = false }: CinematicFilmExper
       />
 
       {/* ── 7. CONTACT (UNPINNED - THE DRAFTING DESK) ───────────────────────── */}
-      <div id="contact-section" data-witty-index={7} className="witty-section stack-section relative w-full bg-[#030303] z-50 border-t border-white/5 rounded-t-[40px] md:rounded-t-[60px] shadow-[0_-20px_50px_rgba(0,0,0,0.5)] contact-panel-wrapper overflow-hidden">
+      <div id="contact-section" data-witty-index={7} className="witty-section stack-section relative w-full bg-[#030303] z-50 border-t border-white/5 rounded-t-[32px] sm:rounded-t-[40px] md:rounded-t-[60px] shadow-[0_-20px_50px_rgba(0,0,0,0.5)] contact-panel-wrapper overflow-hidden">
         <ArchitecturalGrid />
 
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-amber-900/10 blur-[100px] rounded-full pointer-events-none" />
 
-        <div className="max-w-6xl mx-auto px-6 sm:px-8 md:px-16 pt-12 sm:pt-14 md:pt-18 pb-12 sm:pb-14 md:pb-16 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16">
+        <div className="max-w-6xl mx-auto px-5 sm:px-8 md:px-16 pt-8 sm:pt-14 md:pt-18 pb-8 sm:pb-14 md:pb-16 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-12 lg:gap-16">
             
             <div className="relative">
-               <h2 className="text-3xl sm:text-5xl md:text-6xl font-serif font-normal tracking-normal text-white mb-4 sm:mb-6 leading-[1.1] contact-reveal opacity-0 translate-y-8">
+               <h2 className="text-2xl sm:text-5xl md:text-6xl font-serif font-normal tracking-normal text-white mb-2 sm:mb-6 leading-[1.1] contact-reveal opacity-0 translate-y-8">
                  Let's build something <br/>
                  <span className="italic text-amber-300 relative inline-block">
                    memorable.
@@ -570,54 +566,54 @@ export function CinematicFilmExperience({ isLoaded = false }: CinematicFilmExper
             </div>
             
             {/* RIGHT SIDE: EDITORIAL LIST VIEW */}
-            <div className="flex flex-col justify-center space-y-6 lg:pl-6">
+            <div className="flex flex-col justify-center space-y-3 sm:space-y-6 lg:pl-6">
               {/* ITEM 1: EMAIL & MESSAGE */}
-              <div className="contact-reveal opacity-0 translate-y-8 group border-b border-white/10 pb-6">
+              <div className="contact-reveal opacity-0 translate-y-8 group border-b border-white/10 pb-3 sm:pb-6">
                 <a 
                   href="mailto:dhruvnaiya@gmail.com" 
                   className="flex items-center justify-between group/link py-1"
                 >
-                  <div className="flex items-center space-x-3.5">
-                    <div className="w-10 h-10 rounded-xl bg-amber-400/10 border border-amber-400/20 flex items-center justify-center text-amber-400 group-hover/link:bg-amber-400/20 group-hover/link:scale-105 transition-all">
-                      <Mail className="w-4 h-4" />
+                  <div className="flex items-center space-x-3 sm:space-x-3.5">
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-amber-400/10 border border-amber-400/20 flex items-center justify-center text-amber-400 group-hover/link:bg-amber-400/20 group-hover/link:scale-105 transition-all">
+                      <Mail className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                     </div>
                     <div>
-                      <span className="text-xs text-neutral-400 font-sans block">
+                      <span className="text-[11px] sm:text-xs text-neutral-400 font-sans block">
                         Write a message or just say hi,
                       </span>
-                      <span className="text-base md:text-lg font-mono tracking-wider font-medium text-amber-400 group-hover/link:text-amber-300 transition-colors block mt-0.5">
+                      <span className="text-sm sm:text-base md:text-lg font-mono tracking-wider font-medium text-amber-400 group-hover/link:text-amber-300 transition-colors block mt-0.5">
                         dhruvnaiya@gmail.com
                       </span>
                     </div>
                   </div>
-                  <ArrowUpRight className="w-5 h-5 text-neutral-500 group-hover/link:text-amber-400 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-all" />
+                  <ArrowUpRight className="w-4 h-4 sm:w-5 sm:h-5 text-neutral-500 group-hover/link:text-amber-400 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-all" />
                 </a>
               </div>
 
               {/* ITEM 2: LINKEDIN */}
-              <div className="contact-reveal opacity-0 translate-y-8 group border-b border-white/10 pb-6">
+              <div className="contact-reveal opacity-0 translate-y-8 group border-b border-white/10 pb-3 sm:pb-6">
                 <a 
                   href="https://www.linkedin.com/in/naiya-dhruv-b040bb210" 
                   target="_blank" 
                   rel="noreferrer" 
                   className="flex items-center justify-between group/link py-1"
                 >
-                  <div className="flex items-center space-x-3.5">
-                    <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-neutral-300 group-hover/link:border-amber-400/30 group-hover/link:text-amber-400 group-hover/link:scale-105 transition-all">
-                      <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current">
+                  <div className="flex items-center space-x-3 sm:space-x-3.5">
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-neutral-300 group-hover/link:border-amber-400/30 group-hover/link:text-amber-400 group-hover/link:scale-105 transition-all">
+                      <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-current">
                         <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
                       </svg>
                     </div>
                     <div>
-                      <span className="text-xs text-neutral-400 block font-sans">
+                      <span className="text-[11px] sm:text-xs text-neutral-400 block font-sans">
                         Connect &amp; Endorsements
                       </span>
-                      <span className="text-base md:text-lg font-sans font-medium text-neutral-200 group-hover/link:text-white transition-colors">
+                      <span className="text-sm sm:text-base md:text-lg font-sans font-medium text-neutral-200 group-hover/link:text-white transition-colors">
                         LinkedIn / Naiya Dhruv
                       </span>
                     </div>
                   </div>
-                  <ArrowUpRight className="w-5 h-5 text-neutral-500 group-hover/link:text-amber-400 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-all" />
+                  <ArrowUpRight className="w-4 h-4 sm:w-5 sm:h-5 text-neutral-500 group-hover/link:text-amber-400 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-all" />
                 </a>
               </div>
             </div>

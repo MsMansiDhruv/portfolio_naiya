@@ -3,7 +3,7 @@ import { LogoGold } from './LogoGold'
 
 const LINKS = [
   { label: 'Space', href: '#top', id: 'top' },
-  { label: 'Work', href: '#work', id: 'work' },
+  { label: 'Projects', href: '#work', id: 'work' },
   { label: 'About', href: '#about', id: 'about' },
   { label: 'Method', href: '#method', id: 'method' },
   { label: 'Contact', href: '#contact', id: 'contact' },

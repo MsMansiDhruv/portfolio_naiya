@@ -48,7 +48,7 @@ export function ScrubVideoSection({
     let rafId: number | null = null
     let isMounted = true
 
-    // Continuous Animation Frame loop for ultra-smooth video scrubbing
+    // Continuous Animation Frame loop for ultra-smooth bidirectional video scrubbing
     const renderLoop = () => {
       if (!isMounted) return
 
@@ -58,19 +58,14 @@ export function ScrubVideoSection({
         !isNaN(vid.duration) &&
         vid.duration > 0
       ) {
-        const diff = targetTime - vid.currentTime
-        if (Math.abs(diff) > 0.008) {
-          // Smooth momentum dampening for video playback
-          const step = diff * 0.28
-          const newTime = Math.max(0, Math.min(vid.duration - 0.02, vid.currentTime + step))
-          try {
-            if ('fastSeek' in vid && typeof (vid as any).fastSeek === 'function' && Math.abs(diff) > 0.4) {
-              (vid as any).fastSeek(newTime)
-            } else {
-              vid.currentTime = newTime
-            }
-          } catch {
-            // Ignore seek race errors
+        // Only trigger a new seek if the previous seek has completed to avoid decoder lock
+        if (!vid.seeking) {
+          const diff = targetTime - vid.currentTime
+          if (Math.abs(diff) > 0.006) {
+            // Responsive step sizing for instant bidirectional tracking
+            const step = Math.abs(diff) > 0.35 ? diff * 0.55 : diff * 0.36
+            const newTime = Math.max(0, Math.min(vid.duration - 0.02, vid.currentTime + step))
+            vid.currentTime = newTime
           }
         }
       }
@@ -80,18 +75,38 @@ export function ScrubVideoSection({
 
     rafId = requestAnimationFrame(renderLoop)
 
+    // Handle seeked event to catch up immediately if user scrolled rapidly
+    const handleSeeked = () => {
+      if (!isMounted || !vid || isNaN(vid.duration) || vid.duration <= 0) return
+      const diff = targetTime - vid.currentTime
+      if (Math.abs(diff) > 0.04) {
+        const step = diff * 0.5
+        const newTime = Math.max(0, Math.min(vid.duration - 0.02, vid.currentTime + step))
+        vid.currentTime = newTime
+      }
+    }
+    vid.addEventListener('seeked', handleSeeked)
+
     // Responsive scrollAmount calibration for mobile devices
     const isMobile = window.innerWidth < 768
     const effectiveScrollAmount = isMobile 
       ? (isHero ? '+=100%' : '+=110%')
       : scrollAmount
 
+    // Top-to-bottom refresh priority prevents pin spacer miscalculations during reverse scrolling
+    const priority = isHero ? 10 : sectionId === 'scene-2' ? 8 : sectionId === 'scene-3' ? 6 : 4
+
     const trigger = ScrollTrigger.create({
       trigger: containerRef.current,
       start: 'top top',
       end: effectiveScrollAmount,
       pin: true,
-      scrub: 1.0,
+      pinSpacing: true,
+      anticipatePin: 1,
+      fastScrollEnd: true,
+      preventOverlaps: true,
+      refreshPriority: priority,
+      scrub: 0.35,
       onEnter: () => {
         if (sectionId) {
           dialogueAudioManager.onSectionEnter(sectionId, dialogueSrc)
@@ -106,48 +121,52 @@ export function ScrubVideoSection({
         if (sectionId) {
           dialogueAudioManager.onSectionLeave(sectionId)
         }
+        if (vid && !isNaN(vid.duration)) {
+          const maxPlayable = sectionId === 'scene-4' ? vid.duration * 0.85 : Math.max(0, vid.duration - 0.03)
+          targetTime = maxPlayable
+          vid.currentTime = maxPlayable
+        }
       },
       onLeaveBack: () => {
         if (sectionId) {
           dialogueAudioManager.onSectionLeave(sectionId)
         }
+        if (vid && !isNaN(vid.duration)) {
+          targetTime = 0
+          vid.currentTime = 0
+        }
       },
       onUpdate: (self) => {
-        // 1. Calculate target time smoothly
+        // 1. Calculate target time smoothly in both forward and reverse directions
         if (vid && !isNaN(vid.duration) && vid.duration > 0) {
-          targetTime = Math.min(self.progress * vid.duration, Math.max(0, vid.duration - 0.03))
+          const maxPlayable = sectionId === 'scene-4' ? vid.duration * 0.85 : Math.max(0, vid.duration - 0.03)
+          targetTime = Math.max(0, Math.min(self.progress * maxPlayable, maxPlayable))
         }
 
         // 2. Hardware-accelerated GPU overlay glide
         if (overlayWrapperRef.current) {
           const p = self.progress
           let opacity = 1
-          let y = 0
 
           if (isHero) {
-            // Hero: 100% visible at start; glides out gently on scroll past 65%
-            if (p > 0.65) {
-              const exit = Math.min(1, (p - 0.65) / 0.35)
+            // Hero: 100% visible at start; glides out gently on scroll past 70%
+            if (p > 0.70) {
+              const exit = Math.min(1, (p - 0.70) / 0.30)
               opacity = Math.max(0, 1 - exit)
-              y = -exit * 24
             } else {
               opacity = 1
-              y = 0
             }
           } else {
-            // Pinned Scenes (Video 2 & Video 3): Stays 100% solid and illuminated throughout the entire video scrub
-            if (p < 0.08) {
-              const enter = p / 0.08
-              opacity = Math.min(1, Math.max(0, enter))
-              y = (1 - enter) * 16
+            // Pinned Scenes: Solid 100% visibility, dissolving smoothly as section completes
+            if (p > 0.84) {
+              const exit = Math.min(1, (p - 0.84) / 0.16)
+              opacity = Math.max(0, 1 - exit)
             } else {
               opacity = 1
-              y = 0
             }
           }
 
           overlayWrapperRef.current.style.opacity = `${opacity}`
-          overlayWrapperRef.current.style.transform = `translate3d(0, ${y}px, 0)`
         }
       },
     })
@@ -160,6 +179,7 @@ export function ScrubVideoSection({
     return () => {
       isMounted = false
       if (rafId) cancelAnimationFrame(rafId)
+      vid?.removeEventListener('seeked', handleSeeked)
       trigger.kill(true)
       if (sectionId) {
         dialogueAudioManager.onSectionLeave(sectionId)
@@ -177,10 +197,11 @@ export function ScrubVideoSection({
     >
       <div className={`absolute inset-0 w-full h-full overflow-hidden ${roundedTop ? 'rounded-t-[40px] md:rounded-t-[60px]' : ''}`}>
         <video
-          key={currentSrc}
           ref={videoRef}
           src={currentSrc}
-          className="absolute inset-0 w-full h-full object-cover will-change-transform pointer-events-none"
+          className={`absolute inset-0 w-full h-full object-cover will-change-transform pointer-events-none transition-transform duration-300 ${
+            sectionId === 'scene-2' ? 'scale-[1.06] origin-top-left' : ''
+          }`}
           playsInline
           muted
           preload="auto"
@@ -189,7 +210,15 @@ export function ScrubVideoSection({
           {...({ 'webkit-playsinline': 'true' } as any)}
         />
         
-        <div className="absolute inset-0 z-20 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.7)_100%)] mix-blend-multiply" />
+        {/* Subtle corner mask for scene-2 to fully conceal bottom-right watermark */}
+        {sectionId === 'scene-2' && (
+          <div className="absolute bottom-0 right-0 w-52 h-28 bg-gradient-to-tl from-black via-black/85 to-transparent pointer-events-none z-20" />
+        )}
+        
+        {/* Subtle 10% edge vignette for superior text visibility and cinematic contrast */}
+        <div className="absolute inset-0 z-20 pointer-events-none bg-[radial-gradient(ellipse_at_center,transparent_45%,rgba(0,0,0,0.50)_100%)]" />
+        <div className="absolute inset-0 z-20 pointer-events-none bg-gradient-to-b from-black/40 via-transparent to-black/40" />
+        <div className="absolute inset-0 z-20 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.55)_100%)] mix-blend-multiply" />
         
         {/* Kinetic Lenis-linked overlay container with GPU transform */}
         <div 

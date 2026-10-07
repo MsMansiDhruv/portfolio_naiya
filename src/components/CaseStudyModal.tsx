@@ -101,7 +101,7 @@ export function CaseStudyModal({ project, onClose }: CaseStudyModalProps) {
     if (!project) return []
 
     let sources = (
-      project.id === 'logo-branding'
+      project.id === 'logo-branding' || project.id === 'pitch-decks'
         ? [...(project.gallery || [])]
         : [
             ...(project.gallery || []),
@@ -113,6 +113,12 @@ export function CaseStudyModal({ project, onClose }: CaseStudyModalProps) {
     if (project.id === 'logo-branding') {
       sources = sources.filter(
         (s) => !s.includes('stationery') && !s.includes('card')
+      )
+    }
+
+    if (project.id === 'pitch-decks') {
+      sources = sources.filter(
+        (s) => !s.includes('genie') && !s.includes('card-cover')
       )
     }
 
@@ -163,12 +169,12 @@ export function CaseStudyModal({ project, onClose }: CaseStudyModalProps) {
       } else if (project.id === 'logo-branding') {
         if (src.includes('kyron')) {
           itemTitle = 'Kyron'
-          itemCategory = 'Logo Design'
-          itemSubtitle = 'Concept 01 - The Join · Negative Space "K" & Panel Joinery System'
+          itemCategory = 'Logo Design and branding'
+          itemSubtitle = 'Kitchens · Interiors · Panels Architectural Identity System'
         } else if (src.includes('kavach')) {
-          itemTitle = 'Kavach'
-          itemCategory = 'Logo Design'
-          itemSubtitle = 'Logo Inspiration & Meaning · Shield, Hindi "क" & Invisible Grille'
+          itemTitle = 'Kavach by MD Corp'
+          itemCategory = 'Logo Design and branding'
+          itemSubtitle = 'Logo Inspiration & Identity · Shield, Hindi "क" & Invisible Grille'
         }
       } else if (project.id === 'packaging-architecture') {
         if (src.includes('macrofuel-creatine-single-jar')) {
@@ -183,6 +189,18 @@ export function CaseStudyModal({ project, onClose }: CaseStudyModalProps) {
           itemTitle = 'Macro Fuel Whey Protein 12G Jars'
           itemCategory = 'Supplement Packaging'
           itemSubtitle = 'Chocolate Whey Protein · 3D Product Jars Mockup'
+        } else if (src.includes('macrofuel-creatine-gym-splash') || src.includes('gym-splash') || src.includes('macrofuel-creatine-lemon') || src.includes('creatine-lemon') || src.includes('macrofuel-opt-01')) {
+          itemTitle = 'Macro Fuel Creatine 3G (Lemon Splash)'
+          itemCategory = 'Supplement Packaging'
+          itemSubtitle = 'Lemon Flavor · Micronized Creatine 3D Particle Splash Render'
+        } else if (src.includes('blentree-fish-curry') || src.includes('blentree')) {
+          itemTitle = 'Blentree Fish Curry Masala'
+          itemCategory = 'Spice Packaging'
+          itemSubtitle = 'Ready to Cook · Retail Box Packaging & Concept'
+        } else if (src.includes('vadhiyar-farm-pouch-lineup') || src.includes('farm-pouch')) {
+          itemTitle = 'Vadhiyar Hybrid Seed Pouches'
+          itemCategory = 'Seed Pouches'
+          itemSubtitle = 'Vadhiyar Green, Vadhiyar-7, Regrow & Vadhiyar-21 Lineup'
         } else if (src.includes('vadhiyar-mustard-pouch') || src.includes('mustard')) {
           itemTitle = 'Vadhiyar-14 Mustard Seeds'
           itemCategory = 'Seed Pouch'
@@ -195,21 +213,13 @@ export function CaseStudyModal({ project, onClose }: CaseStudyModalProps) {
           itemTitle = 'Vadhiyar-111 Guar Seeds'
           itemCategory = 'Seed Pouch'
           itemSubtitle = 'Research Guar Seed Retail Pouch Packaging'
-        } else if (src.includes('macrofuel-opt-01') || src.includes('macrofuel')) {
-          itemTitle = 'Macro Fuel Box Packaging & Dielines'
-          itemCategory = 'Retail Box'
-          itemSubtitle = 'Production Box Packaging & Print Specifications'
-        } else if (src.includes('blentree-fish-curry') || src.includes('blentree')) {
-          itemTitle = 'Blentree Fish Curry Masala'
-          itemCategory = 'Spice Packaging'
-          itemSubtitle = 'Ready to Cook · Retail Box Packaging & Concept'
+        } else if (src.includes('macrofuel')) {
+          itemTitle = 'Macro Fuel Packaging System'
+          itemCategory = 'Supplement Packaging'
+          itemSubtitle = '3D Nutrition Line & Print Specifications'
         }
       } else if (project.id === 'pitch-decks') {
-        if (src.includes('ankpal-genie-growth-cover')) {
-          itemTitle = 'ANKPAL 3D Genie & Analytics Pitch Deck'
-          itemCategory = 'Investor Deck'
-          itemSubtitle = '3D Brand Visuals, Growth Metrics & Business System Deck'
-        } else if (src.includes('ankpal-pitch-systems')) {
+        if (src.includes('ankpal-pitch-systems')) {
           itemTitle = 'ANKPAL AI Distribution Pitch Deck'
           itemCategory = 'Investor Deck'
           itemSubtitle = 'Slide Deck Architecture with Smart Genie'
@@ -374,13 +384,13 @@ export function CaseStudyModal({ project, onClose }: CaseStudyModalProps) {
       className="fixed inset-0 z-[99999] overflow-y-auto overscroll-contain bg-[#08080a] text-[#f7f4ee] flex flex-col outline-none"
     >
       {/* Top Fixed Control Bar */}
-      <div className="sticky top-0 z-30 flex items-center justify-between px-6 sm:px-12 py-4 bg-[#08080a]/90 backdrop-blur-xl border-b border-white/10 font-mono text-xs tracking-widest">
-        <div className="flex items-center gap-3">
-          <span className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse" />
-          <span className="text-white font-bold text-sm tracking-wide">
+      <div className="sticky top-0 z-30 flex items-center justify-between px-3.5 sm:px-6 md:px-12 py-3 sm:py-4 bg-[#08080a]/95 backdrop-blur-xl border-b border-white/10 font-mono text-xs tracking-widest">
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0 pr-2">
+          <span className="w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full bg-amber-400 animate-pulse shrink-0" />
+          <span className="text-white font-bold text-xs sm:text-sm tracking-wide truncate">
             {project.title}
           </span>
-          <span className="px-2 py-0.5 rounded bg-white/10 text-amber-400 text-[10px] font-sans">
+          <span className="hidden xs:inline px-2 py-0.5 rounded bg-white/10 text-amber-400 text-[9px] sm:text-[10px] font-sans shrink-0">
             {project.category}
           </span>
         </div>
@@ -388,18 +398,18 @@ export function CaseStudyModal({ project, onClose }: CaseStudyModalProps) {
         <button
           type="button"
           onClick={handleReturnToGallery}
-          className="flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/20 bg-white/5 hover:bg-white hover:text-black hover:border-white transition-all text-xs font-mono group cursor-pointer"
+          className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 rounded-full border border-white/20 bg-white/5 hover:bg-white hover:text-black hover:border-white transition-all text-[11px] sm:text-xs font-mono group cursor-pointer shrink-0"
         >
           <span>CLOSE</span>
-          <span className="text-[10px] opacity-60 group-hover:opacity-100">[ESC]</span>
+          <span className="hidden sm:inline text-[10px] opacity-60 group-hover:opacity-100">[ESC]</span>
           <X className="w-3.5 h-3.5" />
         </button>
       </div>
 
       {/* Project Header Container */}
-      <div className="max-w-6xl mx-auto w-full px-6 sm:px-12 pt-10 pb-6 flex flex-col gap-6">
-        <div className="flex flex-col gap-3 border-b border-white/10 pb-8">
-          <div className="flex items-center gap-2 text-xs font-mono text-amber-400 uppercase tracking-widest">
+      <div className="max-w-6xl mx-auto w-full px-4 sm:px-8 md:px-12 pt-6 sm:pt-10 pb-4 sm:pb-6 flex flex-col gap-4 sm:gap-6">
+        <div className="flex flex-col gap-2.5 sm:gap-3 border-b border-white/10 pb-6 sm:pb-8">
+          <div className="flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs font-mono text-amber-400 uppercase tracking-widest">
             <span>PROJECT</span>
             <span className="text-neutral-600">/</span>
             <span>{project.title}</span>
@@ -411,17 +421,15 @@ export function CaseStudyModal({ project, onClose }: CaseStudyModalProps) {
             )}
           </div>
 
-          <h1 className="font-serif text-4xl sm:text-6xl font-normal text-white tracking-normal leading-[1.15]">
+          <h1 className="font-serif text-3xl sm:text-5xl md:text-6xl font-normal text-white tracking-normal leading-[1.15]">
             {project.title}
           </h1>
 
-          <p className="font-sans text-base sm:text-lg text-neutral-200 max-w-3xl font-light leading-relaxed">
-            {isSocialMedia
-              ? 'High-converting creatives, branded carousels, and visual storytelling crafted to stop the scroll and build brand recall across digital platforms.'
-              : project.description || project.tagline}
+          <p className="font-sans text-sm sm:text-base md:text-lg text-neutral-200 max-w-3xl font-light leading-relaxed">
+            {project.description || project.tagline}
           </p>
 
-          <div className="flex flex-wrap items-center gap-y-2 gap-x-6 text-xs font-mono text-neutral-400 pt-3 border-t border-white/5">
+          <div className="flex flex-wrap items-center gap-y-2 gap-x-4 sm:gap-x-6 text-[11px] sm:text-xs font-mono text-neutral-400 pt-3 border-t border-white/5">
             <div className="flex items-center gap-1.5">
               <span className="text-neutral-500">CATEGORY:</span>
               <span className="text-amber-300 font-semibold">{project.category}</span>
@@ -514,21 +522,21 @@ export function CaseStudyModal({ project, onClose }: CaseStudyModalProps) {
             className="w-full max-w-5xl flex items-center justify-between text-xs font-mono text-neutral-400 pt-2 pb-4 z-20"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center gap-2.5">
-              <span className="text-amber-400 font-bold">
+            <div className="flex items-center gap-2 min-w-0 pr-2">
+              <span className="text-amber-400 font-bold shrink-0">
                 [{String(activeLightbox.index + 1).padStart(2, '0')} / {String(activeLightbox.total).padStart(2, '0')}]
               </span>
-              <span className="text-white font-sans text-sm font-medium">
+              <span className="text-white font-sans text-xs sm:text-sm font-medium truncate">
                 {activeLightbox.title}
               </span>
               {activeLightbox.tag && (
-                <span className="px-2 py-0.5 rounded bg-white/10 text-neutral-300 text-[10px]">
+                <span className="hidden xs:inline px-2 py-0.5 rounded bg-white/10 text-neutral-300 text-[9px] sm:text-[10px] shrink-0">
                   {activeLightbox.tag}
                 </span>
               )}
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
               {/* Flyer 3D Flip Page Button */}
               {activeLightbox.backSrc && (
                 <button
@@ -537,15 +545,15 @@ export function CaseStudyModal({ project, onClose }: CaseStudyModalProps) {
                     e.stopPropagation()
                     setIsLightboxFlipped(!isLightboxFlipped)
                   }}
-                  className={`flex items-center gap-2 px-4 py-1.5 rounded-full border-2 text-xs font-mono font-bold transition-all cursor-pointer shadow-lg active:scale-95 ${
+                  className={`flex items-center gap-1.5 px-3 sm:px-4 py-1.5 rounded-full border-2 text-[11px] sm:text-xs font-mono font-bold transition-all cursor-pointer shadow-lg active:scale-95 ${
                     isLightboxFlipped
                       ? 'bg-emerald-400 text-black border-emerald-300 shadow-[0_0_18px_rgba(52,211,153,0.6)]'
                       : 'bg-amber-400 text-black border-amber-300 shadow-[0_0_18px_rgba(251,191,36,0.6)] hover:bg-amber-300'
                   }`}
                   title="Flip page to see reverse side"
                 >
-                  <RotateCw className="w-3.5 h-3.5 animate-spin-slow" />
-                  <span>{isLightboxFlipped ? 'SHOW FRONT COVER ↻' : 'FLIP TO REVERSE SIDE ↻'}</span>
+                  <RotateCw className="w-3.5 h-3.5" />
+                  <span>{isLightboxFlipped ? 'FRONT ↻' : 'REVERSE ↻'}</span>
                 </button>
               )}
 
@@ -553,15 +561,15 @@ export function CaseStudyModal({ project, onClose }: CaseStudyModalProps) {
               <button
                 type="button"
                 onClick={() => setIsZoomed(!isZoomed)}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-mono transition-all cursor-pointer ${
+                className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full border text-[11px] sm:text-xs font-mono transition-all cursor-pointer ${
                   isZoomed
                     ? 'bg-amber-400 text-black border-amber-400 font-bold shadow-[0_0_12px_rgba(245,158,11,0.5)]'
                     : 'bg-white/10 hover:bg-white/20 text-white border-white/20'
                 }`}
-                title="Toggle 2x Zoom (or double click image) to inspect packaging typography & print dieline"
+                title="Toggle Zoom"
               >
                 {isZoomed ? <ZoomOut className="w-3.5 h-3.5" /> : <ZoomIn className="w-3.5 h-3.5" />}
-                <span>{isZoomed ? 'ZOOM 2X (ACTIVE)' : 'ZOOM INSPECT'}</span>
+                <span className="hidden sm:inline">{isZoomed ? 'ZOOM 2X' : 'ZOOM'}</span>
               </button>
 
               {/* Open High-Res in New Tab */}
