@@ -21,7 +21,7 @@ class DialogueAudioManager {
   private currentSectionId: string | null = null;
   private isPlaying: boolean = false;
   private hasUserInteracted: boolean = false;
-  private isMuted: boolean = false;
+  private isMuted: boolean = true;
   private targetVolume: number = 0.85;
 
   // Fade animation reference to cancel overlapping transitions
@@ -327,7 +327,23 @@ class DialogueAudioManager {
   public setMuted(muted: boolean) {
     this.isMuted = muted;
     if (muted) {
-      this.stopCurrentDialogue(150);
+      this.pendingPlay = null;
+      this.cancelOngoingFade();
+      if (this.audio) {
+        this.audio.pause();
+        this.audio.volume = 0;
+        this.audio.currentTime = 0;
+      }
+      if (this.gainNode && this.audioCtx) {
+        try {
+          const now = this.audioCtx.currentTime;
+          this.gainNode.gain.cancelScheduledValues(now);
+          this.gainNode.gain.setValueAtTime(0.0001, now);
+        } catch {
+          // Ignore audioCtx timing errors
+        }
+      }
+      this.isPlaying = false;
     } else if (this.currentClipUrl && this.currentSectionId) {
       this.playDialogue(this.currentClipUrl, this.currentSectionId);
     }

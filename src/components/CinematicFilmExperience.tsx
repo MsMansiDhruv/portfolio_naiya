@@ -273,6 +273,11 @@ export function CinematicFilmExperience({ isLoaded = false }: CinematicFilmExper
     }
   }
 
+  // Ensure dialogueAudioManager is synchronized with initial mute state
+  useEffect(() => {
+    dialogueAudioManager.setMuted(isMuted)
+  }, [])
+
   const handleScrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
@@ -288,6 +293,7 @@ export function CinematicFilmExperience({ isLoaded = false }: CinematicFilmExper
     } else {
       if (audioRef.current) {
         audioRef.current.muted = true
+        audioRef.current.pause()
       }
       setIsMuted(true)
       dialogueAudioManager.setMuted(true)
@@ -450,53 +456,53 @@ export function CinematicFilmExperience({ isLoaded = false }: CinematicFilmExper
         </div>
 
         {/* Continuous Marquee Track - Always visible and illuminated without disappearing */}
-        <div className="relative z-10 w-full overflow-hidden flex pointer-events-none py-6 mb-8">
+        <div className="relative z-10 w-full overflow-hidden flex pointer-events-none py-3 sm:py-6 mb-4 sm:mb-8">
           {/* Edge Fog Gradients to gracefully feather the marquee */}
-          <div className="absolute left-0 top-0 bottom-0 w-20 md:w-36 bg-gradient-to-r from-[#09090d] to-transparent z-20 pointer-events-none" />
-          <div className="absolute right-0 top-0 bottom-0 w-20 md:w-36 bg-gradient-to-l from-[#09090d] to-transparent z-20 pointer-events-none" />
+          <div className="absolute left-0 top-0 bottom-0 w-12 sm:w-20 md:w-36 bg-gradient-to-r from-[#09090d] to-transparent z-20 pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-12 sm:w-20 md:w-36 bg-gradient-to-l from-[#09090d] to-transparent z-20 pointer-events-none" />
 
-          <div className="marquee-track flex space-x-8 px-6 w-max pointer-events-auto">
+          <div className="marquee-track flex space-x-4 sm:space-x-8 px-3 sm:px-6 w-max pointer-events-auto">
             {[1, 2].map((group) => (
-              <div key={group} className="flex space-x-8 shrink-0">
+              <div key={group} className="flex space-x-4 sm:space-x-8 shrink-0">
                 {TESTIMONIALS.map((t, i) => (
                   <div 
                     key={`${group}-${t.id || i}`} 
-                    className="testimonial-card w-[360px] md:w-[460px] bg-gradient-to-b from-[#181820]/95 via-[#131318]/95 to-[#0e0e12]/98 border border-amber-500/25 rounded-2xl p-7 md:p-8 shrink-0 flex flex-col justify-between hover:border-amber-400/60 hover:shadow-[0_15px_45px_rgba(212,175,55,0.22)] hover:-translate-y-1.5 transition-all duration-500 shadow-xl backdrop-blur-xl relative overflow-hidden group"
+                    className="testimonial-card w-[260px] sm:w-[320px] md:w-[440px] bg-gradient-to-b from-[#181820]/95 via-[#131318]/95 to-[#0e0e12]/98 border border-amber-500/25 rounded-2xl p-4 sm:p-6 md:p-8 shrink-0 flex flex-col justify-between hover:border-amber-400/60 hover:shadow-[0_15px_45px_rgba(212,175,55,0.22)] hover:-translate-y-1.5 transition-all duration-500 shadow-xl backdrop-blur-xl relative overflow-hidden group"
                     style={{ perspective: '600px' }}
                   >
                     {/* Glowing Top Amber Accent Line */}
-                    <div className="absolute top-0 left-6 right-6 h-[1.5px] bg-gradient-to-r from-transparent via-amber-400/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    <div className="absolute top-0 left-4 right-4 sm:left-6 sm:right-6 h-[1.5px] bg-gradient-to-r from-transparent via-amber-400/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                     
                     <div>
-                      <div className="flex items-center justify-between mb-4">
-                        <div className="flex items-center space-x-1 text-amber-400 text-xs">
+                      <div className="flex items-center justify-between mb-2.5 sm:mb-4">
+                        <div className="flex items-center space-x-0.5 sm:space-x-1 text-amber-400 text-xs">
                           {Array.from({ length: t.rating || 5 }).map((_, rIdx) => (
-                            <Star key={rIdx} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                            <Star key={rIdx} className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-amber-400 text-amber-400" />
                           ))}
                         </div>
-                        <span className="text-[9px] font-mono text-amber-300 font-semibold tracking-widest uppercase px-2.5 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/30">
+                        <span className="text-[7.5px] sm:text-[9px] font-mono text-amber-300 font-semibold tracking-widest uppercase px-2 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/30">
                           {t.tag || 'VERIFIED FEEDBACK'}
                         </span>
                       </div>
-                      <p className="text-neutral-100 font-serif text-lg leading-relaxed mb-6 italic group-hover:text-white transition-colors">
+                      <p className="text-neutral-100 font-serif text-xs sm:text-base md:text-lg leading-relaxed mb-3 sm:mb-6 italic group-hover:text-white transition-colors">
                         "{t.quote}"
                       </p>
                     </div>
 
-                    <div className="pt-4 border-t border-white/10 flex items-center justify-between">
+                    <div className="pt-3 sm:pt-4 border-t border-white/10 flex items-center justify-between">
                       <div className="flex flex-col">
-                        <div className="flex items-center space-x-2">
+                        <div className="flex items-center space-x-1.5 sm:space-x-2">
                           <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
-                          <span className="text-xs font-mono text-amber-300 uppercase tracking-widest font-semibold">
+                          <span className="text-[11px] sm:text-xs font-mono text-amber-300 uppercase tracking-widest font-semibold">
                             {t.author}
                           </span>
                         </div>
-                        <span className="text-[10px] font-mono text-neutral-400 ml-3.5 mt-0.5">
+                        <span className="text-[9px] sm:text-[10px] font-mono text-neutral-400 ml-3 mt-0.5">
                           {t.role} · <span className="text-neutral-300 font-medium">{t.company}</span>
                         </span>
                       </div>
-                      <div className="flex items-center space-x-1 text-[9px] font-mono text-amber-400/90 tracking-wider bg-amber-500/10 px-2.5 py-1 rounded-full border border-amber-500/20">
-                        <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
+                      <div className="flex items-center space-x-1 text-[8px] sm:text-[9px] font-mono text-amber-400/90 tracking-wider bg-amber-500/10 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full border border-amber-500/20">
+                        <ShieldCheck className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-400" />
                         <span>VERIFIED</span>
                       </div>
                     </div>

@@ -55,21 +55,24 @@ export function RedesignedHeaderMenu({
 
   return (
     <>
-      <header data-no-pen="true" className="main-header-nav fixed top-3 sm:top-5 left-0 right-0 z-50 px-3 sm:px-4 md:px-8 flex items-center justify-between pointer-events-none select-none">
+      <header 
+        data-no-pen="true" 
+        className="main-header-nav fixed top-3 sm:top-5 left-0 right-0 z-50 px-2.5 sm:px-4 md:px-8 flex items-center justify-between pointer-events-none select-none w-full max-w-[100vw]"
+      >
         {/* LEFT: BRAND EMBLEM LOGO */}
         <div
           data-no-pen="true"
-          className="pointer-events-auto cursor-pointer flex items-center space-x-2.5 sm:space-x-3 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-neutral-950/85 border border-amber-500/30 backdrop-blur-xl shadow-[0_10px_35px_rgba(0,0,0,0.8)] hover:border-amber-400 transition-all group"
+          className="pointer-events-auto cursor-pointer flex items-center space-x-2 sm:space-x-3 px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-full bg-neutral-950/90 border border-amber-500/30 backdrop-blur-xl shadow-[0_10px_35px_rgba(0,0,0,0.8)] hover:border-amber-400 transition-all group shrink-0"
           onClick={() => handleNavClick('origins')}
         >
           <div className="shrink-0">
-            <NaiyaDhruvLogo size={20} interactive={true} glow={true} />
+            <NaiyaDhruvLogo size={18} interactive={true} glow={true} />
           </div>
           <div>
-            <span className="text-[11px] sm:text-xs font-serif font-light text-white block leading-none group-hover:text-amber-200 transition-colors">
+            <span className="text-[10px] sm:text-xs font-serif font-light text-white block leading-none group-hover:text-amber-200 transition-colors whitespace-nowrap">
               NAIYA <span className="italic text-amber-300 font-normal">DHRUV</span>
             </span>
-            <span className="text-[6.5px] sm:text-[7px] font-mono tracking-widest text-neutral-400 uppercase block mt-0.5 group-hover:text-amber-400/80 transition-colors">
+            <span className="hidden xs:block text-[6px] sm:text-[7px] font-mono tracking-widest text-neutral-400 uppercase mt-0.5 group-hover:text-amber-400/80 transition-colors whitespace-nowrap">
               GRAPHIC DESIGNER
             </span>
           </div>
@@ -140,11 +143,11 @@ export function RedesignedHeaderMenu({
         </nav>
 
         {/* RIGHT: AUDIO EQUALIZER VISUALIZER & MOBILE MENU BUTTON */}
-        <div data-no-pen="true" className="pointer-events-auto flex items-center space-x-2 sm:space-x-3">
+        <div data-no-pen="true" className="pointer-events-auto flex items-center space-x-1.5 sm:space-x-3 shrink-0">
           {/* AUDIO SOUNDSCAPE EQUALIZER BUTTON */}
           <button
             onClick={toggleAudio}
-            className="px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-full bg-neutral-950/85 hover:bg-neutral-900 border border-amber-500/30 hover:border-amber-400 backdrop-blur-xl text-amber-400 transition-all shadow-lg flex items-center space-x-1.5 sm:space-x-2 text-[8.5px] sm:text-[9px] font-mono tracking-widest uppercase cursor-pointer min-h-[38px]"
+            className="px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-full bg-neutral-950/90 hover:bg-neutral-900 border border-amber-500/30 hover:border-amber-400 backdrop-blur-xl text-amber-400 transition-all shadow-lg flex items-center space-x-1.5 sm:space-x-2 text-[8px] sm:text-[9px] font-mono tracking-widest uppercase cursor-pointer min-h-[34px] sm:min-h-[38px]"
           >
             {!isMuted ? (
               <div className="flex items-end space-x-0.5 h-3">
@@ -155,7 +158,7 @@ export function RedesignedHeaderMenu({
             ) : (
               <VolumeX className="w-3.5 h-3.5 text-neutral-400" />
             )}
-            <span className="hidden xs:inline">{isMuted ? 'AUDIO OFF' : 'AUDIO ON'}</span>
+            <span className="text-[8px] sm:text-[9px]">{isMuted ? 'MUTE' : 'SOUND'}</span>
           </button>
 
           {/* PORTFOLIO BUTTON (DESKTOP) */}
@@ -171,7 +174,7 @@ export function RedesignedHeaderMenu({
           {/* MOBILE MENU TOGGLE (MOBILE ONLY) */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="lg:hidden p-2 rounded-full bg-neutral-950/85 border border-amber-500/30 text-amber-400 hover:border-amber-400 transition-all backdrop-blur-xl shadow-lg cursor-pointer min-h-[38px] min-w-[38px] flex items-center justify-center"
+            className="lg:hidden p-1.5 sm:p-2 rounded-full bg-neutral-950/90 border border-amber-500/30 text-amber-400 hover:border-amber-400 transition-all backdrop-blur-xl shadow-lg cursor-pointer min-h-[34px] min-w-[34px] sm:min-h-[38px] sm:min-w-[38px] flex items-center justify-center"
             aria-label="Toggle navigation menu"
           >
             {isMobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
@@ -194,14 +197,15 @@ export function RedesignedHeaderMenu({
       {isMobileMenuOpen && (
         <div 
           data-no-pen="true"
-          className="fixed inset-0 z-[49] bg-black/85 backdrop-blur-2xl flex flex-col justify-center items-center p-6 select-none lg:hidden animate-fadeIn"
+          style={{ touchAction: 'pan-y' }}
+          className="fixed inset-0 z-[9999] bg-black/90 backdrop-blur-2xl flex flex-col justify-center items-center p-4 select-none lg:hidden animate-fadeIn"
           onClick={() => setIsMobileMenuOpen(false)}
         >
           <div 
-            className="w-full max-w-xs flex flex-col items-center gap-3 bg-neutral-950/90 border border-amber-500/30 p-6 rounded-3xl shadow-2xl"
+            className="w-full max-w-xs flex flex-col items-center gap-2.5 bg-neutral-950 border border-amber-500/30 p-5 rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.9)]"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center space-x-2 text-[10px] font-mono tracking-widest text-amber-400 uppercase mb-2">
+            <div className="flex items-center space-x-2 text-[9px] font-mono tracking-widest text-amber-400 uppercase mb-1">
               <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
               <span>NAVIGATION DIRECTORY</span>
             </div>
@@ -216,7 +220,7 @@ export function RedesignedHeaderMenu({
               <button
                 key={item.id}
                 onClick={() => handleNavClick(item.id as any)}
-                className={`w-full py-3 px-4 rounded-xl text-xs font-mono tracking-wider transition-all text-left flex items-center justify-between cursor-pointer ${
+                className={`w-full py-2.5 px-3.5 rounded-xl text-xs font-mono tracking-wider transition-all text-left flex items-center justify-between cursor-pointer ${
                   activeSection === item.id
                     ? 'bg-amber-400 text-black font-bold shadow-[0_0_15px_rgba(245,158,11,0.4)]'
                     : 'bg-white/5 text-neutral-300 hover:bg-white/10 hover:text-white'
@@ -229,7 +233,7 @@ export function RedesignedHeaderMenu({
 
             <button
               onClick={() => setIsMobileMenuOpen(false)}
-              className="mt-2 text-xs font-mono text-neutral-400 hover:text-white py-2"
+              className="mt-1 text-xs font-mono text-neutral-400 hover:text-white py-1.5"
             >
               [CLOSE MENU]
             </button>
