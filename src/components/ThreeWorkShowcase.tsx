@@ -228,7 +228,7 @@ export function ThreeWorkShowcase({ onSelectProject }: ThreeWorkShowcaseProps) {
     // Responsive camera depth calculation
     const updateCameraZ = (w: number, h: number) => {
       const aspect = w / h
-      const targetZ = aspect < 0.65 ? 13.8 : aspect < 0.9 ? 12.0 : aspect < 1.15 ? 10.8 : 9.6
+      const targetZ = aspect < 0.60 ? 14.5 : aspect < 0.85 ? 13.0 : aspect < 1.15 ? 11.2 : 9.6
       cameraZRef.current = targetZ
       camera.position.z = targetZ
     }
@@ -338,7 +338,6 @@ export function ThreeWorkShowcase({ onSelectProject }: ThreeWorkShowcaseProps) {
       meshHolders.push(meshHolder)
 
       // STATIC INVISIBLE HIT PROXY: Generous bounding plane facing the camera.
-      // DOES NOT ROTATE when card flips, so cursor off-center or mid-flip NEVER loses hover!
       const hitProxyGeo = new THREE.PlaneGeometry(cardWidth * 1.35, cardHeight * 1.25)
       const hitProxyMat = new THREE.MeshBasicMaterial({
         transparent: true,
@@ -357,7 +356,6 @@ export function ThreeWorkShowcase({ onSelectProject }: ThreeWorkShowcaseProps) {
     })
 
     // 4b. Synchronized Pure Vertical Floating Wave for 3D Cards
-    // All cards float in perfect unison so back cards never drop below front cards
     const sharedFloat = { y: 0 }
     const floatTween = gsap.to(sharedFloat, {
       y: 0.16,
@@ -371,13 +369,20 @@ export function ThreeWorkShowcase({ onSelectProject }: ThreeWorkShowcaseProps) {
     const raycaster = new THREE.Raycaster()
     const mousePos = new THREE.Vector2()
 
+    // Directional touch tracking: ensures vertical swipe scrolls the page smoothly
+    let dragDirectionChecked = false
+    let isHorizontalOrbit = false
+
     const handlePointerDown = (e: PointerEvent) => {
       isDraggingRef.current = true
+      dragDirectionChecked = false
+      isHorizontalOrbit = false
       dragStartRef.current = {
         x: e.clientX,
+        y: e.clientY,
         time: performance.now(),
         lastX: e.clientX
-      }
+      } as any
     }
 
     const handlePointerMove = (e: PointerEvent) => {
@@ -400,9 +405,26 @@ export function ThreeWorkShowcase({ onSelectProject }: ThreeWorkShowcaseProps) {
       mouseParallaxRef.current.targetY = 0
 
       if (isDraggingRef.current) {
-        const deltaX = e.clientX - dragStartRef.current.lastX
-        dragStartRef.current.lastX = e.clientX
-        rotationRef.current.target += (deltaX / rect.width) * 3.5
+        const totalDx = Math.abs(e.clientX - dragStartRef.current.x)
+        const totalDy = Math.abs(e.clientY - (dragStartRef.current as any).y)
+
+        // Determine if movement is horizontal drag or vertical scroll
+        if (!dragDirectionChecked && (totalDx > 6 || totalDy > 6)) {
+          dragDirectionChecked = true
+          if (totalDy > totalDx) {
+            // User is scrolling down/up the webpage: cancel Three.js drag immediately
+            isDraggingRef.current = false
+            return
+          } else {
+            isHorizontalOrbit = true
+          }
+        }
+
+        if (isHorizontalOrbit || !e.pointerType || e.pointerType === 'mouse') {
+          const deltaX = e.clientX - dragStartRef.current.lastX
+          dragStartRef.current.lastX = e.clientX
+          rotationRef.current.target += (deltaX / rect.width) * 3.5
+        }
       }
     }
 
@@ -583,10 +605,14 @@ export function ThreeWorkShowcase({ onSelectProject }: ThreeWorkShowcaseProps) {
   const activeProject = PORTFOLIO_PROJECTS[activeIndex] || PORTFOLIO_PROJECTS[0]
 
   return (
-    <div className={`relative w-full ${viewMode === 'orbit' ? 'h-[85vh] min-h-[560px] md:h-[88vh] md:min-h-[640px] max-h-[920px] overflow-hidden' : 'min-h-[85vh] h-auto overflow-visible'} select-none transition-all duration-500`}>
+    <div 
+      style={{ touchAction: 'pan-y' }}
+      className={`relative w-full ${viewMode === 'orbit' ? 'h-[85vh] min-h-[560px] md:h-[88vh] md:min-h-[640px] max-h-[920px] overflow-hidden' : 'min-h-[85vh] h-auto overflow-visible'} select-none transition-all duration-500`}
+    >
       {/* 3D WebGL Canvas Mount Container */}
       <div 
         ref={mountRef} 
+        style={{ touchAction: 'pan-y' }}
         className={`absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing z-0 ${viewMode === 'orbit' ? 'block' : 'hidden pointer-events-none'}`} 
       />
 

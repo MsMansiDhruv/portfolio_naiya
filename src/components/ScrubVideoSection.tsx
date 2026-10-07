@@ -80,10 +80,16 @@ export function ScrubVideoSection({
 
     rafId = requestAnimationFrame(renderLoop)
 
+    // Responsive scrollAmount calibration for mobile devices
+    const isMobile = window.innerWidth < 768
+    const effectiveScrollAmount = isMobile 
+      ? (isHero ? '+=100%' : '+=110%')
+      : scrollAmount
+
     const trigger = ScrollTrigger.create({
       trigger: containerRef.current,
       start: 'top top',
-      end: scrollAmount,
+      end: effectiveScrollAmount,
       pin: true,
       scrub: 1.0,
       onEnter: () => {
@@ -165,7 +171,7 @@ export function ScrubVideoSection({
     <div 
       ref={containerRef} 
       data-witty-index={wittyIndex} 
-      className={`witty-section relative w-full h-screen bg-black flex items-center justify-center border-t border-white/5 ${
+      className={`witty-section relative w-full h-screen h-[100dvh] min-h-[100dvh] bg-black flex items-center justify-center border-t border-white/5 ${
         roundedTop ? 'rounded-t-[40px] md:rounded-t-[60px] shadow-[0_-20px_50px_rgba(0,0,0,0.5)] z-40' : 'z-10'
       }`}
     >
@@ -174,12 +180,13 @@ export function ScrubVideoSection({
           key={currentSrc}
           ref={videoRef}
           src={currentSrc}
-          className="absolute inset-0 w-full h-full object-cover will-change-transform"
+          className="absolute inset-0 w-full h-full object-cover will-change-transform pointer-events-none"
           playsInline
           muted
           preload="auto"
           disablePictureInPicture
           tabIndex={-1}
+          {...({ 'webkit-playsinline': 'true' } as any)}
         />
         
         <div className="absolute inset-0 z-20 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.7)_100%)] mix-blend-multiply" />

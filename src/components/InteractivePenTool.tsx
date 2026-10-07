@@ -52,6 +52,18 @@ function isInteractiveElement(target: HTMLElement | null): boolean {
 }
 
 export function InteractivePenTool() {
+  const [isSupported, setIsSupported] = useState(false)
+
+  useEffect(() => {
+    // Only enable pen tool on desktop devices with fine pointer (mouse)
+    const isTouch = 
+      typeof window !== 'undefined' && 
+      (window.matchMedia('(pointer: coarse)').matches || 
+       ('ontouchstart' in window) || 
+       window.innerWidth < 1024)
+    setIsSupported(!isTouch)
+  }, [])
+
   const requestRef = useRef<number>(0)
   const trailPathRef = useRef<SVGPathElement>(null)
   const mouseRef = useRef<Point>({ x: -100, y: -100 })
@@ -232,6 +244,8 @@ export function InteractivePenTool() {
   }, [triggerShatter])
 
   useEffect(() => {
+    if (!isSupported) return
+
     let mouseMoved = false
 
     const handleMouseMove = (e: MouseEvent) => {
@@ -401,6 +415,8 @@ export function InteractivePenTool() {
     if (close) d += ' Z'
     return d
   }
+
+  if (!isSupported) return null
 
   return (
     <div className="fixed inset-0 pointer-events-none z-[9999] select-none">

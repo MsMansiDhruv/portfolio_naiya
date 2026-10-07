@@ -278,40 +278,14 @@ export function CaseStudyModal({ project, onClose }: CaseStudyModalProps) {
     const lenis = (window as any).__lenis
     lenis?.stop()
 
-    // 3. Attach native wheel and touch listeners directly to modal container with capture
     const modalEl = modalRef.current
     if (!modalEl) return
 
     modalEl.focus()
 
-    const handleNativeWheel = (e: WheelEvent) => {
-      e.stopPropagation()
-      e.stopImmediatePropagation()
-      modalEl.scrollTop += e.deltaY
-    }
-
-    let touchStartY = 0
-    const handleTouchStart = (e: TouchEvent) => {
-      touchStartY = e.touches[0].clientY
-    }
-
-    const handleTouchMove = (e: TouchEvent) => {
-      e.stopPropagation()
-      const deltaY = touchStartY - e.touches[0].clientY
-      touchStartY = e.touches[0].clientY
-      modalEl.scrollTop += deltaY
-    }
-
-    modalEl.addEventListener('wheel', handleNativeWheel, { passive: true, capture: true })
-    modalEl.addEventListener('touchstart', handleTouchStart, { passive: true })
-    modalEl.addEventListener('touchmove', handleTouchMove, { passive: true, capture: true })
-
     return () => {
       document.documentElement.classList.remove('modal-open')
       document.body.classList.remove('modal-open')
-      modalEl.removeEventListener('wheel', handleNativeWheel, { capture: true })
-      modalEl.removeEventListener('touchstart', handleTouchStart)
-      modalEl.removeEventListener('touchmove', handleTouchMove, { capture: true })
       lenis?.start()
     }
   }, [project])
@@ -396,6 +370,7 @@ export function CaseStudyModal({ project, onClose }: CaseStudyModalProps) {
       ref={modalRef}
       tabIndex={-1}
       data-lenis-prevent="true"
+      style={{ WebkitOverflowScrolling: 'touch', touchAction: 'pan-y' }}
       className="fixed inset-0 z-[99999] overflow-y-auto overscroll-contain bg-[#08080a] text-[#f7f4ee] flex flex-col outline-none"
     >
       {/* Top Fixed Control Bar */}

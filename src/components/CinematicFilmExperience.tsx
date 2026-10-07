@@ -295,11 +295,13 @@ export function CinematicFilmExperience({ isLoaded = false }: CinematicFilmExper
   }
 
   const cursorStyle = `
-    *, body, html {
-      cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M2 2 L9 23 L14 17 L25 28 L28 25 L17 14 L23 9 Z" fill="%230A0A0A" stroke="%23D4AF37" stroke-width="1.8" stroke-linejoin="round"/><path d="M2 2 L14 14" stroke="%23D4AF37" stroke-width="1.5"/><circle cx="14" cy="14" r="1.8" fill="%23D4AF37"/><circle cx="2" cy="2" r="1.5" fill="%23FFFFFF"/></svg>') 2 2, crosshair !important;
-    }
-    button, a, input, textarea, select, canvas, [role="button"], [role="tab"], .cursor-pointer {
-      cursor: pointer !important;
+    @media (pointer: fine) and (min-width: 1024px) {
+      *, body, html {
+        cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M2 2 L9 23 L14 17 L25 28 L28 25 L17 14 L23 9 Z" fill="%230A0A0A" stroke="%23D4AF37" stroke-width="1.8" stroke-linejoin="round"/><path d="M2 2 L14 14" stroke="%23D4AF37" stroke-width="1.5"/><circle cx="14" cy="14" r="1.8" fill="%23D4AF37"/><circle cx="2" cy="2" r="1.5" fill="%23FFFFFF"/></svg>') 2 2, crosshair !important;
+      }
+      button, a, input, textarea, select, canvas, [role="button"], [role="tab"], .cursor-pointer {
+        cursor: pointer !important;
+      }
     }
   `
 
@@ -325,33 +327,33 @@ export function CinematicFilmExperience({ isLoaded = false }: CinematicFilmExper
         isHero={true}
         data-witty-index={0}
         overlay={
-          <div className="absolute inset-0 z-50 pointer-events-none flex flex-col justify-between p-8 md:p-16">
+          <div className="absolute inset-0 z-50 pointer-events-none flex flex-col justify-between p-6 sm:p-8 md:p-16">
             {/* Center-Left: High-Impact Editorial Lockup */}
-            <div className="w-full max-w-2xl pointer-events-auto my-auto pt-12 md:pt-0">
+            <div className="w-full max-w-2xl pointer-events-auto my-auto pt-16 sm:pt-12 md:pt-0">
               {/* Discipline telemetry tag */}
-              <div className="hero-tag opacity-0 inline-flex items-center space-x-2.5 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-amber-500/10 border border-amber-500/40 text-amber-300 text-xs sm:text-sm md:text-base font-mono font-semibold tracking-widest uppercase mb-6 shadow-[0_0_20px_rgba(245,158,11,0.25)] backdrop-blur-md">
+              <div className="hero-tag opacity-0 inline-flex items-center space-x-2.5 px-3.5 sm:px-5 py-1.5 sm:py-2.5 rounded-full bg-amber-500/10 border border-amber-500/40 text-amber-300 text-xs sm:text-sm md:text-base font-mono font-semibold tracking-widest uppercase mb-4 sm:mb-6 shadow-[0_0_20px_rgba(245,158,11,0.25)] backdrop-blur-md">
                 <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse shadow-[0_0_8px_rgba(251,191,36,0.8)]" />
                 <span>GRAPHIC DESIGNER</span>
               </div>
 
-              <h1 className="text-6xl md:text-[5.5rem] font-serif tracking-normal leading-[0.95] mb-5 font-normal text-white overflow-hidden">
+              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-[5.5rem] font-serif tracking-normal leading-[1.02] sm:leading-[0.95] mb-4 sm:mb-5 font-normal text-white overflow-hidden">
                 <span className="hero-line-1 opacity-0 inline-block tracking-wider">NAIYA</span> <br/>
                 <span className="hero-line-2 opacity-0 italic font-normal text-amber-300 relative inline-block mt-1 tracking-wider">
                   DHRUV
                 </span>
               </h1>
 
-              <div className="hero-gold-rule opacity-0 w-32 h-[1.5px] bg-gradient-to-r from-amber-400 via-amber-300 to-transparent mb-5 shadow-[0_0_12px_rgba(245,158,11,0.6)]" />
+              <div className="hero-gold-rule opacity-0 w-24 sm:w-32 h-[1.5px] bg-gradient-to-r from-amber-400 via-amber-300 to-transparent mb-4 sm:mb-5 shadow-[0_0_12px_rgba(245,158,11,0.6)]" />
 
-              <p className="hero-manifesto opacity-0 text-sm md:text-base text-neutral-200 font-light leading-relaxed max-w-md">
+              <p className="hero-manifesto opacity-0 text-xs sm:text-sm md:text-base text-neutral-200 font-light leading-relaxed max-w-md">
                 There's more — Dive into my space of <DoodleHighlight type="underline" delay={0.9}>selected work</DoodleHighlight> and experiments I couldn’t leave alone.
               </p>
             </div>
 
             {/* Bottom Right Animated Action Indicator */}
             <div className="w-full flex items-end justify-end pointer-events-auto pb-4">
-              <div className="hero-scroll-cue opacity-0 flex items-center space-x-2.5 px-4 py-2 rounded-full bg-black/60 border border-amber-500/30 text-amber-300 text-[9px] font-mono tracking-widest backdrop-blur-md shadow-[0_0_20px_rgba(212,175,55,0.2)]">
-                <Mouse className="w-3.5 h-3.5 text-amber-400 animate-bounce" />
+              <div className="hero-scroll-cue opacity-0 flex items-center space-x-2.5 px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full bg-black/60 border border-amber-500/30 text-amber-300 text-[8px] sm:text-[9px] font-mono tracking-widest backdrop-blur-md shadow-[0_0_20px_rgba(212,175,55,0.2)]">
+                <Mouse className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-amber-400 animate-bounce" />
                 <span>SCROLL DOWN TO EXPLORE</span>
               </div>
             </div>
@@ -400,9 +402,9 @@ export function CinematicFilmExperience({ isLoaded = false }: CinematicFilmExper
         roundedTop={true}
         data-witty-index={4}
         overlay={
-          <div className="absolute inset-0 z-50 p-6 md:p-12 lg:p-14 pointer-events-none flex flex-col justify-between">
-            <div className="w-80 md:w-[460px] pointer-events-none pt-10 md:pt-16">
-              <h2 className="text-4xl md:text-5xl font-serif text-white font-light mb-4 leading-tight">
+          <div className="absolute inset-0 z-50 p-6 sm:p-8 md:p-12 lg:p-14 pointer-events-none flex flex-col justify-between">
+            <div className="w-full max-w-sm sm:max-w-md md:w-[460px] pointer-events-none pt-12 sm:pt-14 md:pt-16">
+              <h2 className="text-2xl sm:text-3xl md:text-5xl font-serif text-white font-light mb-3 sm:mb-4 leading-snug">
                 Visual systems built for the real world — <br/>
                 <span className="italic text-amber-300">from retail shelves to boardrooms.</span>
               </h2>
@@ -410,8 +412,8 @@ export function CinematicFilmExperience({ isLoaded = false }: CinematicFilmExper
 
             {/* Bottom Right Contextual Animated Action Indicator */}
             <div className="w-full flex justify-end pointer-events-auto pb-4">
-              <div className="flex items-center space-x-2.5 px-4 py-2 rounded-full bg-black/60 border border-amber-500/30 text-amber-300 text-[9px] font-mono tracking-widest backdrop-blur-md shadow-[0_0_20px_rgba(212,175,55,0.2)]">
-                <Sparkles className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
+              <div className="flex items-center space-x-2.5 px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full bg-black/60 border border-amber-500/30 text-amber-300 text-[8px] sm:text-[9px] font-mono tracking-widest backdrop-blur-md shadow-[0_0_20px_rgba(212,175,55,0.2)]">
+                <Sparkles className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-amber-400 animate-pulse" />
                 <span>SCROLL TO EXPLORE WORK</span>
               </div>
             </div>
@@ -423,7 +425,7 @@ export function CinematicFilmExperience({ isLoaded = false }: CinematicFilmExper
       <div 
         id="testimonials-section"
         data-witty-index={5} 
-        className="witty-section stack-section relative w-full bg-[#09090d] z-40 border-t border-amber-500/30 rounded-t-[40px] md:rounded-t-[60px] shadow-[0_-25px_60px_rgba(212,175,55,0.08)] overflow-hidden py-16 md:py-20"
+        className="witty-section stack-section relative w-full bg-[#09090d] z-40 border-t border-amber-500/30 rounded-t-[40px] md:rounded-t-[60px] shadow-[0_-25px_60px_rgba(212,175,55,0.08)] overflow-hidden py-14 sm:py-16 md:py-20"
       >
         <ArchitecturalGrid />
 
@@ -431,15 +433,15 @@ export function CinematicFilmExperience({ isLoaded = false }: CinematicFilmExper
         <div className="ambient-glow-pool absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[450px] bg-gradient-to-r from-amber-500/15 via-amber-400/20 to-amber-600/15 blur-[140px] rounded-full pointer-events-none" />
         <div className="ambient-glow-pool absolute -top-24 left-1/3 w-80 h-80 bg-amber-300/10 blur-[90px] rounded-full pointer-events-none" />
 
-        <div className="relative z-10 max-w-5xl mx-auto px-6 pt-4 pb-10 text-center pointer-events-none">
+        <div className="relative z-10 max-w-5xl mx-auto px-6 pt-4 pb-8 sm:pb-10 text-center pointer-events-none">
           {/* Top Architectural Telemetry Pill */}
-          <div className="section-glide-text inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-[10px] font-mono tracking-widest uppercase mb-5 shadow-[0_0_20px_rgba(245,158,11,0.25)]">
+          <div className="section-glide-text inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-[9px] sm:text-[10px] font-mono tracking-widest uppercase mb-4 sm:mb-5 shadow-[0_0_20px_rgba(245,158,11,0.25)]">
             <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
             <span>COLLABORATOR &amp; PEER FEEDBACK</span>
           </div>
 
-          <h2 className="section-glide-text text-4xl md:text-6xl font-serif text-white font-normal tracking-normal mb-4">
-            <DoodleHighlight type="circle" className="px-6 py-2">Trusted by peers &amp; teams.</DoodleHighlight>
+          <h2 className="section-glide-text text-3xl sm:text-4xl md:text-6xl font-serif text-white font-normal tracking-normal mb-3 sm:mb-4">
+            <DoodleHighlight type="circle" className="px-4 sm:px-6 py-1.5 sm:py-2">Trusted by peers &amp; teams.</DoodleHighlight>
           </h2>
 
           <p className="section-glide-text text-sm md:text-base text-neutral-200 font-light max-w-lg mx-auto leading-relaxed">
@@ -514,15 +516,15 @@ export function CinematicFilmExperience({ isLoaded = false }: CinematicFilmExper
         roundedTop={true}
         data-witty-index={6}
         overlay={
-          <div className="absolute inset-0 z-50 p-6 md:p-12 lg:p-14 pointer-events-none flex flex-col justify-between">
+          <div className="absolute inset-0 z-50 p-6 sm:p-8 md:p-12 lg:p-14 pointer-events-none flex flex-col justify-between">
             {/* Center Content Row: Tools of the Trade on left, Close Headline on right */}
-            <div className="w-full flex flex-col md:flex-row items-center justify-between gap-8 my-auto pt-8 md:pt-0 pointer-events-none">
+            <div className="w-full flex flex-col md:flex-row items-center justify-between gap-6 sm:gap-8 my-auto pt-8 md:pt-0 pointer-events-none">
               {/* LEFT: GSAP ANIMATED SKILL ICONS (Tools of the Trade) */}
               <InteractiveSkillIcons />
 
               {/* RIGHT: THE CLOSE HEADLINE */}
-              <div className="w-full max-w-sm md:w-[380px] text-left md:text-right pointer-events-auto self-end md:self-center">
-                <h2 className="text-3xl md:text-5xl font-serif text-white font-normal tracking-normal leading-tight">
+              <div className="w-full max-w-sm md:w-[380px] text-left md:text-right pointer-events-auto self-start md:self-center">
+                <h2 className="text-2xl sm:text-3xl md:text-5xl font-serif text-white font-normal tracking-normal leading-tight">
                   Design that communicates. <br/>
                   <span className="italic text-amber-300">Crafted with purpose.</span>
                 </h2>
@@ -531,8 +533,8 @@ export function CinematicFilmExperience({ isLoaded = false }: CinematicFilmExper
 
             {/* Bottom Right Contextual Animated Action Indicator (Matches Scene 1 & Scene 3 unified format) */}
             <div className="w-full flex justify-end pointer-events-auto pb-4">
-              <div className="flex items-center space-x-2.5 px-4 py-2 rounded-full bg-black/60 border border-amber-500/30 text-amber-300 text-[9px] font-mono tracking-widest backdrop-blur-md shadow-[0_0_20px_rgba(212,175,55,0.2)]">
-                <Mouse className="w-3.5 h-3.5 text-amber-400 animate-bounce" />
+              <div className="flex items-center space-x-2.5 px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full bg-black/60 border border-amber-500/30 text-amber-300 text-[8px] sm:text-[9px] font-mono tracking-widest backdrop-blur-md shadow-[0_0_20px_rgba(212,175,55,0.2)]">
+                <Mouse className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-amber-400 animate-bounce" />
                 <span>SCROLL DOWN TO GET IN TOUCH</span>
               </div>
             </div>
@@ -546,17 +548,17 @@ export function CinematicFilmExperience({ isLoaded = false }: CinematicFilmExper
 
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-amber-900/10 blur-[100px] rounded-full pointer-events-none" />
 
-        <div className="max-w-6xl mx-auto px-8 md:px-16 pt-14 md:pt-18 pb-14 md:pb-16 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
+        <div className="max-w-6xl mx-auto px-6 sm:px-8 md:px-16 pt-12 sm:pt-14 md:pt-18 pb-12 sm:pb-14 md:pb-16 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16">
             
             <div className="relative">
-               <h2 className="text-5xl md:text-6xl font-serif font-normal tracking-normal text-white mb-6 leading-[1.1] contact-reveal opacity-0 translate-y-8">
+               <h2 className="text-3xl sm:text-5xl md:text-6xl font-serif font-normal tracking-normal text-white mb-4 sm:mb-6 leading-[1.1] contact-reveal opacity-0 translate-y-8">
                  Let's build something <br/>
                  <span className="italic text-amber-300 relative inline-block">
                    memorable.
                  </span>
                </h2>
-               <p className="text-neutral-400 text-sm max-w-md font-light leading-relaxed contact-reveal opacity-0 translate-y-8">
+               <p className="text-neutral-400 text-xs sm:text-sm max-w-md font-light leading-relaxed contact-reveal opacity-0 translate-y-8">
                  Available for brand identity systems, retail packaging, investor pitch decks, and commercial print collateral. Have a project in mind? Let's connect.
                </p>
             </div>

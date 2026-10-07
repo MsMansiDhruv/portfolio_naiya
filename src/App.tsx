@@ -16,14 +16,24 @@ export default function App() {
     }
     window.scrollTo(0, 0)
 
+    // Detect if current device has touch capabilities
+    const isTouch = typeof window !== 'undefined' && ('ontouchstart' in window || navigator.maxTouchPoints > 0)
+
+    // Configure GSAP ScrollTrigger for responsive & mobile resilience
+    ScrollTrigger.config({
+      ignoreMobileResize: true,
+      autoRefreshEvents: 'visibilitychange,DOMContentLoaded,load,resize',
+    })
+
     const lenis = new Lenis({
-      duration: 1.1,
+      duration: isTouch ? 0.9 : 1.1,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: 'vertical',
       gestureOrientation: 'vertical',
       smoothWheel: true,
       wheelMultiplier: 1.0,
-      touchMultiplier: 1.5,
+      touchMultiplier: 1.0,
+      syncTouch: false,
     })
 
     lenis.on('scroll', (e: any) => {
@@ -43,7 +53,7 @@ export default function App() {
     // Recalculate ScrollTrigger once DOM layout stabilizes
     const refreshTimer = setTimeout(() => {
       ScrollTrigger.refresh()
-    }, 100)
+    }, 150)
 
     return () => {
       clearTimeout(refreshTimer)
