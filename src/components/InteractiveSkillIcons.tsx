@@ -9,6 +9,7 @@ interface ToolItem {
 const TOOLS: ToolItem[] = [
   { id: 'illustrator', name: 'Illustrator', role: 'Vector Marks & Packaging Art', color: '#FF9A00', iconSrc: '/icons/illustrator.png' },
   { id: 'photoshop', name: 'Photoshop', role: 'Press Retouch & Mockups', color: '#31A8FF', iconSrc: '/icons/photoshop.png' },
+  { id: 'figma', name: 'Figma', role: 'UI, Layout & Design Systems', color: '#F24E1E', iconSrc: '/icons/figma.png' },
   { id: 'premiere', name: 'Premiere Pro', role: 'Video Editing & Motion', color: '#9999FF', iconSrc: '/icons/premiere.png' },
   { id: 'canva', name: 'Canva', role: 'Social Collateral & Systems', color: '#00C4CC', iconSrc: '/icons/canva.png' },
   { id: 'claude', name: 'Claude AI', role: 'Creative Ideation & Prompts', color: '#D97757', iconSrc: '/icons/claude.png' },
@@ -22,8 +23,8 @@ export function InteractiveSkillIcons() {
         <span className="italic text-amber-300">Toolkit</span>
       </h3>
 
-      {/* Grid of 6 Tool Icons with Consistent Sizing & Zero Background */}
-      <div className="grid grid-cols-6 gap-2 sm:gap-3 md:gap-3.5 mb-1 sm:mb-2 max-w-xs sm:max-w-md md:max-w-lg">
+      {/* Grid of 7 Tool Icons with Consistent Sizing & Zero Background */}
+      <div className="grid grid-cols-7 gap-1.5 sm:gap-2.5 md:gap-3 mb-1 sm:mb-2 max-w-sm sm:max-w-md md:max-w-lg">
         {TOOLS.map((tool) => (
           <div
             key={tool.id}
