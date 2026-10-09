@@ -331,14 +331,14 @@ export function CinematicFilmExperience({ isLoaded = false }: CinematicFilmExper
         overlay={
           <div className="absolute inset-0 z-50 pointer-events-none flex flex-col justify-between p-6 sm:p-8 md:p-16">
             {/* Center-Left: High-Impact Editorial Lockup */}
-            <div className="w-full max-w-2xl pointer-events-auto my-auto pt-16 sm:pt-12 md:pt-0">
+            <div className="w-full max-w-2xl pointer-events-auto my-auto pt-16 sm:pt-12 md:pt-0 p-3.5 sm:p-0 rounded-2xl md:rounded-none bg-black/30 md:bg-transparent backdrop-blur-[3px] md:backdrop-blur-none border border-white/10 md:border-transparent shadow-[0_10px_35px_rgba(0,0,0,0.8)] md:shadow-none">
               {/* Discipline telemetry tag */}
               <div className="hero-tag opacity-0 inline-flex items-center space-x-2.5 px-3.5 sm:px-5 py-1.5 sm:py-2.5 rounded-full bg-amber-500/10 border border-amber-500/40 text-amber-300 text-xs sm:text-sm md:text-base font-mono font-semibold tracking-widest uppercase mb-4 sm:mb-6 shadow-[0_0_20px_rgba(245,158,11,0.25)] backdrop-blur-md">
                 <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse shadow-[0_0_8px_rgba(251,191,36,0.8)]" />
                 <span>GRAPHIC DESIGNER</span>
               </div>
 
-              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-[5.5rem] font-serif tracking-normal leading-[1.02] sm:leading-[0.95] mb-4 sm:mb-5 font-normal text-white overflow-hidden">
+              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-[5.5rem] font-serif tracking-normal leading-[1.02] sm:leading-[0.95] mb-4 sm:mb-5 font-normal text-white overflow-hidden drop-shadow-[0_4px_24px_rgba(0,0,0,0.95)]">
                 <span className="hero-line-1 opacity-0 inline-block tracking-wider">NAIYA</span> <br/>
                 <span className="hero-line-2 opacity-0 italic font-normal text-amber-300 relative inline-block mt-1 tracking-wider">
                   DHRUV
@@ -347,7 +347,7 @@ export function CinematicFilmExperience({ isLoaded = false }: CinematicFilmExper
 
               <div className="hero-gold-rule opacity-0 w-24 sm:w-32 h-[1.5px] bg-gradient-to-r from-amber-400 via-amber-300 to-transparent mb-4 sm:mb-5 shadow-[0_0_12px_rgba(245,158,11,0.6)]" />
 
-              <p className="hero-manifesto opacity-0 text-xs sm:text-sm md:text-base text-neutral-200 font-light leading-relaxed max-w-md">
+              <p className="hero-manifesto opacity-0 text-xs sm:text-sm md:text-base text-neutral-100 md:text-neutral-200 font-normal md:font-light leading-relaxed max-w-md drop-shadow-[0_2px_12px_rgba(0,0,0,0.90)]">
                 Dive into my space of <DoodleHighlight type="underline" delay={0.9}>projects</DoodleHighlight> and experiments I couldn’t leave alone.
               </p>
             </div>

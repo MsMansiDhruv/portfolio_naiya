@@ -47,8 +47,27 @@ export function ScrubVideoSection({
     let targetTime = 0
     let rafId: number | null = null
     let isMounted = true
+    let lastSeekTime = 0
 
-    // Continuous Animation Frame loop for ultra-smooth bidirectional video scrubbing
+    const isMobileDevice = typeof window !== 'undefined' && (
+      window.innerWidth < 768 || 'ontouchstart' in window || navigator.maxTouchPoints > 0
+    )
+
+    const executeSeek = (time: number) => {
+      if (!vid || isNaN(vid.duration) || vid.duration <= 0) return
+      const maxPlayable = sectionId === 'scene-4' ? vid.duration * 0.85 : Math.max(0, vid.duration - 0.03)
+      const boundedTime = Math.max(0, Math.min(maxPlayable, time))
+      
+      if (isMobileDevice && (vid as any).fastSeek) {
+        try {
+          (vid as any).fastSeek(boundedTime)
+          return
+        } catch (_) {}
+      }
+      vid.currentTime = boundedTime
+    }
+
+    // Continuous Animation Frame loop with mobile hardware decoder throttling
     const renderLoop = () => {
       if (!isMounted) return
 
@@ -58,14 +77,24 @@ export function ScrubVideoSection({
         !isNaN(vid.duration) &&
         vid.duration > 0
       ) {
-        // Only trigger a new seek if the previous seek has completed to avoid decoder lock
         if (!vid.seeking) {
           const diff = targetTime - vid.currentTime
-          if (Math.abs(diff) > 0.006) {
-            // Responsive step sizing for instant bidirectional tracking
-            const step = Math.abs(diff) > 0.35 ? diff * 0.55 : diff * 0.36
-            const newTime = Math.max(0, Math.min(vid.duration - 0.02, vid.currentTime + step))
-            vid.currentTime = newTime
+          const threshold = isMobileDevice ? 0.025 : 0.006
+
+          if (Math.abs(diff) > threshold) {
+            const now = performance.now()
+            if (!isMobileDevice || now - lastSeekTime > 32) {
+              lastSeekTime = now
+              if (isMobileDevice) {
+                // Mobile: seek directly to targetTime without micro-step decoder congestion
+                executeSeek(targetTime)
+              } else {
+                // Desktop: 60fps sub-frame smooth interpolation
+                const step = Math.abs(diff) > 0.35 ? diff * 0.55 : diff * 0.36
+                const newTime = Math.max(0, Math.min(vid.duration - 0.02, vid.currentTime + step))
+                vid.currentTime = newTime
+              }
+            }
           }
         }
       }
@@ -79,10 +108,14 @@ export function ScrubVideoSection({
     const handleSeeked = () => {
       if (!isMounted || !vid || isNaN(vid.duration) || vid.duration <= 0) return
       const diff = targetTime - vid.currentTime
-      if (Math.abs(diff) > 0.04) {
-        const step = diff * 0.5
-        const newTime = Math.max(0, Math.min(vid.duration - 0.02, vid.currentTime + step))
-        vid.currentTime = newTime
+      if (Math.abs(diff) > (isMobileDevice ? 0.05 : 0.04)) {
+        if (isMobileDevice) {
+          executeSeek(targetTime)
+        } else {
+          const step = diff * 0.5
+          const newTime = Math.max(0, Math.min(vid.duration - 0.02, vid.currentTime + step))
+          vid.currentTime = newTime
+        }
       }
     }
     vid.addEventListener('seeked', handleSeeked)
@@ -90,7 +123,7 @@ export function ScrubVideoSection({
     // Responsive scrollAmount calibration for mobile devices
     const isMobile = window.innerWidth < 768
     const effectiveScrollAmount = isMobile 
-      ? (isHero ? '+=100%' : '+=110%')
+      ? (isHero ? '+=95%' : '+=100%')
       : scrollAmount
 
     // Top-to-bottom refresh priority prevents pin spacer miscalculations during reverse scrolling
@@ -106,7 +139,7 @@ export function ScrubVideoSection({
       fastScrollEnd: true,
       preventOverlaps: true,
       refreshPriority: priority,
-      scrub: 0.35,
+      scrub: isMobile ? 0.25 : 0.35,
       onEnter: () => {
         if (sectionId) {
           dialogueAudioManager.onSectionEnter(sectionId, dialogueSrc)
@@ -124,7 +157,7 @@ export function ScrubVideoSection({
         if (vid && !isNaN(vid.duration)) {
           const maxPlayable = sectionId === 'scene-4' ? vid.duration * 0.85 : Math.max(0, vid.duration - 0.03)
           targetTime = maxPlayable
-          vid.currentTime = maxPlayable
+          executeSeek(maxPlayable)
         }
       },
       onLeaveBack: () => {
@@ -133,7 +166,7 @@ export function ScrubVideoSection({
         }
         if (vid && !isNaN(vid.duration)) {
           targetTime = 0
-          vid.currentTime = 0
+          executeSeek(0)
         }
       },
       onUpdate: (self) => {
@@ -141,6 +174,14 @@ export function ScrubVideoSection({
         if (vid && !isNaN(vid.duration) && vid.duration > 0) {
           const maxPlayable = sectionId === 'scene-4' ? vid.duration * 0.85 : Math.max(0, vid.duration - 0.03)
           targetTime = Math.max(0, Math.min(self.progress * maxPlayable, maxPlayable))
+
+          if (isMobileDevice && !vid.seeking) {
+            const now = performance.now()
+            if (now - lastSeekTime > 32) {
+              lastSeekTime = now
+              executeSeek(targetTime)
+            }
+          }
         }
 
         // 2. Hardware-accelerated GPU overlay glide
@@ -200,8 +241,8 @@ export function ScrubVideoSection({
           ref={videoRef}
           src={currentSrc}
           className={`absolute inset-0 w-full h-full object-cover will-change-transform pointer-events-none transition-transform duration-300 ${
-            sectionId === 'scene-2' ? 'scale-[1.06] origin-top-left' : ''
-          }`}
+            isHero ? 'blur-[3px] md:blur-none scale-[1.04] md:scale-100' : ''
+          } ${sectionId === 'scene-2' ? 'scale-[1.06] origin-top-left' : ''}`}
           playsInline
           muted
           preload="auto"
@@ -215,10 +256,10 @@ export function ScrubVideoSection({
           <div className="absolute bottom-0 right-0 w-52 h-28 bg-gradient-to-tl from-black via-black/85 to-transparent pointer-events-none z-20" />
         )}
         
-        {/* Subtle 10% edge vignette for superior text visibility and cinematic contrast */}
-        <div className="absolute inset-0 z-20 pointer-events-none bg-[radial-gradient(ellipse_at_center,transparent_45%,rgba(0,0,0,0.50)_100%)]" />
-        <div className="absolute inset-0 z-20 pointer-events-none bg-gradient-to-b from-black/40 via-transparent to-black/40" />
-        <div className="absolute inset-0 z-20 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.55)_100%)] mix-blend-multiply" />
+        {/* Deep edge vignette and ambient blackness on mobile for crisp text visibility */}
+        <div className="absolute inset-0 z-20 pointer-events-none bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0.15)_0%,rgba(0,0,0,0.85)_100%)] md:bg-[radial-gradient(ellipse_at_center,transparent_45%,rgba(0,0,0,0.50)_100%)]" />
+        <div className="absolute inset-0 z-20 pointer-events-none bg-gradient-to-b from-black/80 via-black/25 to-black/85 md:from-black/40 md:via-transparent md:to-black/40" />
+        <div className="absolute inset-0 z-20 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_10%,rgba(0,0,0,0.70)_100%)] md:bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.55)_100%)] mix-blend-multiply" />
         
         {/* Kinetic Lenis-linked overlay container with GPU transform */}
         <div 
